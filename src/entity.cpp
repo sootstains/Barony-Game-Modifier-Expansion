@@ -13038,7 +13038,7 @@ void Entity::awardXP(Entity* src, bool share, bool root)
 	int lvlDiff = srcStats->LVL - destStats->LVL;
 	if (lvlDiff < -1)
 	{
-		int penaltyCounter = abs(lvlDiff) / 2; // for every 2 levels difference, apply penalty 1 time
+		int penaltyCounter = abs(lvlDiff) / 3; // for every 3 levels difference, apply penalty 1 time
 		int penalty = baseXp / 5; // penalty subtracts 20% of base exp each time
 		penalty = std::max(1, penalty);
 		baseXp = baseXp - (penalty * penaltyCounter);
