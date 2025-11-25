@@ -4157,6 +4157,38 @@ void Entity::handleEffects(Stat* myStats)
 		}
 	}
 
+		// potion healing
+	if (myStats->EFFECTS[EFF_POTION_HEALING])
+	{ 
+
+		if (myStats->EFFECTS_TIMERS[EFF_POTION_HEALING] < 0)
+		{
+			myStats->EFFECTS_TIMERS[EFF_POTION_HEALING] = 25 * TICKS_PER_SECOND;
+		}
+		else if (myStats->EFFECTS_TIMERS[EFF_POTION_HEALING] > 0)
+		{
+			int interval = std::max(1, (25 * TICKS_PER_SECOND) / myStats->POTHEALING);
+			if ((myStats->EFFECTS_TIMERS[EFF_POTION_HEALING] + 1) % interval == 0)
+			{
+				if (myStats->HP < myStats->MAXHP)
+				{
+					Sint32 oldHP = myStats->HP;
+					this->modHP(1);
+					naturalHeal = true;
+					if (behavior == &actPlayer)
+					{
+						if (oldHP < myStats->HP)
+						{
+							Compendium_t::Events_t::eventUpdateCodex(skill[2], Compendium_t::CPDM_RGN_HP_RUN, "rgn", myStats->HP - oldHP);
+							Compendium_t::Events_t::eventUpdateCodex(skill[2], Compendium_t::CPDM_RGN_HP_SUM, "rgn", myStats->HP - oldHP);
+						}
+						Compendium_t::Events_t::eventUpdateCodex(skill[2], Compendium_t::CPDM_RGN_HP_RATE_MAX, "rgn", healthRegenInterval);
+					}
+				}
+			}
+		}
+	}
+
 	// random teleportation
 	if ( myStats->ring != NULL )
 	{
@@ -4740,7 +4772,7 @@ void Entity::handleEffects(Stat* myStats)
 		}
 	}
 
-	if ( myStats->EFFECTS[EFF_TROLLS_BLOOD] )
+	if ( myStats->EFFECTS[EFF_TROLLS_BLOOD] || myStats->EFFECTS[EFF_POTION_HEALING] )
 	{
 		spawnAmbientParticles(80, 169, 20 + local_rng.rand() % 10, 0.5, true);
 	}
@@ -6037,6 +6069,10 @@ Sint32 statGetDEX(Stat* entitystats, Entity* my)
 		{
 			DEX = std::max(DEX - 5, -2);
 		}
+		else if ( entitystats->type == MINOTAUR)
+		{
+			DEX = DEX - 5;
+		}
 		else
 		{
 			DEX = std::min(DEX - 3, -2);
@@ -6593,6 +6629,12 @@ Sint32 statGetCHR(Stat* entitystats, Entity* my)
 	{
 		CHR += std::max(4, static_cast<int>(CHR * .25));
 	}
+
+	if ( my->behavior == &actPlayer )
+	{
+		entitystats->REPUTATION = (CHR * 5) + entitystats->getModifiedProficiency(PRO_LEADERSHIP);
+	}
+
 	return CHR;
 }
 
@@ -13883,63 +13925,64 @@ bool Entity::checkEnemy(Entity* your)
 					switch ( myStats->type )
 					{
 						case SKELETON:
-							if ( yourStats->type == GHOUL )
+							if ( yourStats->type == GHOUL && myStats->REPUTATION >= REP_BEFRIEND_SKELETON )
 							{
 								result = false;
 							}
 							break;
 						case RAT:
-							if ( yourStats->type == RAT )
+							if ( yourStats->type == RAT && myStats->REPUTATION >= REP_BEFRIEND_RAT )
 							{
 								result = false;
 							}
 							break;
 						case SPIDER:
-							if ( yourStats->type == SPIDER
-								|| yourStats->type == SCARAB || yourStats->type == SCORPION )
+							if ( (yourStats->type == SPIDER
+								|| yourStats->type == SCARAB || yourStats->type == SCORPION) && myStats->REPUTATION >= REP_BEFRIEND_SPIDER )
 							{
 								result = false;
 							}
 							break;
 						case TROLL:
-							if ( yourStats->type == TROLL )
+							if ( yourStats->type == TROLL && myStats->REPUTATION >= REP_BEFRIEND_TROLL )
 							{
 								result = false;
 							}
 							break;
 						case CREATURE_IMP:
-							if ( yourStats->type == CREATURE_IMP )
+							if ( yourStats->type == CREATURE_IMP && myStats->REPUTATION >= REP_BEFRIEND_IMP )
 							{
 								result = false;
 							}
 							break;
 						case GOBLIN:
-							if ( yourStats->type == GOBLIN )
+							if ( yourStats->type == GOBLIN && myStats->REPUTATION >= REP_BEFRIEND_GOBLIN )
 							{
 								result = false;
 							}
 							break;
 						case GOATMAN:
-							if ( yourStats->type == GOATMAN )
+							if ( yourStats->type == GOATMAN && myStats->REPUTATION >= REP_BEFRIEND_GOATMAN )
 							{
 								result = false;
 							}
 							break;
 						case INCUBUS:
 						case SUCCUBUS:
-							if ( yourStats->type == SUCCUBUS || yourStats->type == INCUBUS )
+							if ( (yourStats->type == SUCCUBUS || yourStats->type == INCUBUS) && myStats->REPUTATION >= REP_BEFRIEND_FOOCUBI )
 							{
 								result = false;
 							}
 							break;
 						case INSECTOID:
-							if ( yourStats->type == SCARAB || yourStats->type == INSECTOID || yourStats->type == SCORPION )
+							if ( (yourStats->type == SCARAB || yourStats->type == INSECTOID || yourStats->type == SCORPION) 
+							&& myStats->REPUTATION >= REP_BEFRIEND_INSECTOID )
 							{
 								result = false;
 							}
 							break;
 						case VAMPIRE:
-							if ( yourStats->type == VAMPIRE )
+							if ( yourStats->type == VAMPIRE && myStats->REPUTATION >= REP_BEFRIEND_VAMPIRE )
 							{
 								result = false;
 							}
@@ -13968,7 +14011,7 @@ bool Entity::checkEnemy(Entity* your)
 					switch ( yourStats->type )
 					{
 						case SKELETON:
-							if ( myStats->type == GHOUL )
+							if ( myStats->type == GHOUL && yourStats->REPUTATION >= REP_BEFRIEND_SKELETON )
 							{
 								result = false;
 							}
@@ -13980,52 +14023,53 @@ bool Entity::checkEnemy(Entity* your)
 							}
 							break;
 						case SPIDER:
-							if ( myStats->type == SPIDER
-								|| myStats->type == SCARAB || myStats->type == SCORPION )
+							if ( (myStats->type == SPIDER
+								|| myStats->type == SCARAB || myStats->type == SCORPION) && yourStats->REPUTATION >= REP_BEFRIEND_SPIDER )
 							{
 								result = false;
 							}
 							break;
 						case TROLL:
-							if ( myStats->type == TROLL )
+							if ( myStats->type == TROLL && yourStats->REPUTATION >= REP_BEFRIEND_TROLL )
 							{
 								result = false;
 							}
 							break;
 						case CREATURE_IMP:
-							if ( myStats->type == CREATURE_IMP )
+							if ( myStats->type == CREATURE_IMP && yourStats->REPUTATION >= REP_BEFRIEND_IMP )
 							{
 								result = false;
 							}
 							break;
 						case GOBLIN:
-							if ( myStats->type == GOBLIN )
+							if ( myStats->type == GOBLIN && yourStats->REPUTATION >= REP_BEFRIEND_GOBLIN )
 							{
 								result = false;
 							}
 							break;
 						case GOATMAN:
-							if ( myStats->type == GOATMAN )
+							if ( myStats->type == GOATMAN && yourStats->REPUTATION >= REP_BEFRIEND_GOATMAN )
 							{
 								result = false;
 							}
 							break;
 						case INCUBUS:
 						case SUCCUBUS:
-							if ( myStats->type == SUCCUBUS || myStats->type == INCUBUS )
+							if ( (myStats->type == SUCCUBUS || myStats->type == INCUBUS) && yourStats->REPUTATION >= REP_BEFRIEND_FOOCUBI )
 							{
 								result = false;
 							}
 							break;
 						case INSECTOID:
-							if ( myStats->type == SCARAB 
-								|| myStats->type == INSECTOID || myStats->type == SCORPION )
+							if ( (myStats->type == SCARAB 
+								|| myStats->type == INSECTOID || myStats->type == SCORPION) 
+								&& yourStats->REPUTATION >= REP_BEFRIEND_INSECTOID )
 							{
 								result = false;
 							}
 							break;
 						case VAMPIRE:
-							if ( myStats->type == VAMPIRE )
+							if ( myStats->type == VAMPIRE && yourStats->REPUTATION >= REP_BEFRIEND_VAMPIRE )
 							{
 								result = false;
 							}
@@ -14334,63 +14378,63 @@ bool Entity::checkFriend(Entity* your)
 					switch ( myStats->type )
 					{
 						case SKELETON:
-							if ( yourStats->type == GHOUL )
+							if ( yourStats->type == GHOUL && myStats->REPUTATION >= REP_BEFRIEND_SKELETON )
 							{
 								result = true;
 							}
 							break;
 						case RAT:
-							if ( yourStats->type == RAT )
+							if ( yourStats->type == RAT && myStats->REPUTATION >= REP_BEFRIEND_RAT )
 							{
 								result = true;
 							}
 							break;
 						case SPIDER:
-							if ( yourStats->type == SPIDER || yourStats->type == SCARAB || yourStats->type == SCORPION )
+							if ( (yourStats->type == SPIDER || yourStats->type == SCARAB || yourStats->type == SCORPION) && myStats->REPUTATION >= REP_BEFRIEND_SPIDER )
 							{
 								result = true;
 							}
 							break;
 						case TROLL:
-							if ( yourStats->type == TROLL )
+							if ( yourStats->type == TROLL && myStats->REPUTATION >= REP_BEFRIEND_TROLL)
 							{
 								result = true;
 							}
 							break;
 						case CREATURE_IMP:
-							if ( yourStats->type == CREATURE_IMP )
+							if ( yourStats->type == CREATURE_IMP && myStats->REPUTATION >= REP_BEFRIEND_IMP )
 							{
 								result = true;
 							}
 							break;
 						case GOBLIN:
-							if ( yourStats->type == GOBLIN )
+							if ( yourStats->type == GOBLIN && myStats->REPUTATION >= REP_BEFRIEND_GOBLIN )
 							{
 								result = true;
 							}
 							break;
 						case GOATMAN:
-							if ( yourStats->type == GOATMAN )
+							if ( yourStats->type == GOATMAN && myStats->REPUTATION >= REP_BEFRIEND_GOATMAN )
 							{
 								result = true;
 							}
 							break;
 						case INCUBUS:
 						case SUCCUBUS:
-							if ( yourStats->type == SUCCUBUS || yourStats->type == INCUBUS )
+							if ( (yourStats->type == SUCCUBUS || yourStats->type == INCUBUS) && myStats->REPUTATION >= REP_BEFRIEND_FOOCUBI )
 							{
 								result = true;
 							}
 							break;
 						case INSECTOID:
-							if ( yourStats->type == SCARAB 
-								|| yourStats->type == INSECTOID || yourStats->type == SCORPION )
+							if ( (yourStats->type == SCARAB 
+								|| yourStats->type == INSECTOID || yourStats->type == SCORPION) && myStats->REPUTATION >= REP_BEFRIEND_INSECTOID )
 							{
 								result = true;
 							}
 							break;
 						case VAMPIRE:
-							if ( yourStats->type == VAMPIRE )
+							if ( yourStats->type == VAMPIRE && myStats->REPUTATION >= REP_BEFRIEND_VAMPIRE )
 							{
 								result = true;
 							}
@@ -14422,64 +14466,64 @@ bool Entity::checkFriend(Entity* your)
 					switch ( yourStats->type )
 					{
 						case SKELETON:
-							if ( myStats->type == GHOUL )
+							if ( myStats->type == GHOUL && yourStats->REPUTATION >= REP_BEFRIEND_SKELETON)
 							{
 								result = true;
 							}
 							break;
 						case RAT:
-							if ( myStats->type == RAT )
+							if ( myStats->type == RAT && yourStats->REPUTATION >= REP_BEFRIEND_RAT )
 							{
 								result = true;
 							}
 							break;
 						case SPIDER:
-							if ( myStats->type == SPIDER
-								|| myStats->type == SCARAB || myStats->type == SCORPION )
+							if ( (myStats->type == SPIDER
+								|| myStats->type == SCARAB || myStats->type == SCORPION) && yourStats->REPUTATION >= REP_BEFRIEND_SPIDER )
 							{
 								result = true;
 							}
 							break;
 						case TROLL:
-							if ( myStats->type == TROLL )
+							if ( myStats->type == TROLL && yourStats->REPUTATION >= REP_BEFRIEND_TROLL )
 							{
 								result = true;
 							}
 							break;
 						case CREATURE_IMP:
-							if ( myStats->type == CREATURE_IMP )
+							if ( myStats->type == CREATURE_IMP && yourStats->REPUTATION >= REP_BEFRIEND_IMP )
 							{
 								result = true;
 							}
 							break;
 						case GOBLIN:
-							if ( myStats->type == GOBLIN )
+							if ( myStats->type == GOBLIN && yourStats->REPUTATION >= REP_BEFRIEND_GOBLIN )
 							{
 								result = true;
 							}
 							break;
 						case GOATMAN:
-							if ( myStats->type == GOATMAN )
+							if ( myStats->type == GOATMAN && yourStats->REPUTATION >= REP_BEFRIEND_GOATMAN )
 							{
 								result = true;
 							}
 							break;
 						case INCUBUS:
 						case SUCCUBUS:
-							if ( myStats->type == SUCCUBUS || myStats->type == INCUBUS )
+							if ( (myStats->type == SUCCUBUS || myStats->type == INCUBUS) && yourStats->REPUTATION >= REP_BEFRIEND_FOOCUBI )
 							{
 								result = true;
 							}
 							break;
 						case INSECTOID:
-							if ( myStats->type == SCARAB 
-								|| myStats->type == INSECTOID || myStats->type == SCORPION )
+							if ( (myStats->type == SCARAB 
+								|| myStats->type == INSECTOID || myStats->type == SCORPION) && yourStats->REPUTATION >= REP_BEFRIEND_INSECTOID )
 							{
 								result = true;
 							}
 							break;
 						case VAMPIRE:
-							if ( myStats->type == VAMPIRE )
+							if ( myStats->type == VAMPIRE && yourStats->REPUTATION >= REP_BEFRIEND_VAMPIRE )
 							{
 								result = true;
 							}
@@ -17194,7 +17238,7 @@ void Entity::handleEffectsClient()
 		}
 	}
 
-	if ( myStats->EFFECTS[EFF_TROLLS_BLOOD] )
+	if ( myStats->EFFECTS[EFF_TROLLS_BLOOD] || myStats->EFFECTS[EFF_POTION_HEALING] )
 	{
 		spawnAmbientParticles(80, 169, 20 + local_rng.rand() % 10, 0.5, true);
 	}

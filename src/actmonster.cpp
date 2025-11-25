@@ -1683,21 +1683,22 @@ bool makeFollower(int monsterclicked, bool ringconflict, char namesays[64],
 					}
 					else if ( stats[monsterclicked]->type == SKELETON )
 					{
-						if ( race == GHOUL )
+						if ( race == GHOUL && stats[monsterclicked]->REPUTATION >= REP_BEFRIEND_SKELETON )
 						{
 							canAlly = true;
 						}
 					}
 					else if ( stats[monsterclicked]->type == VAMPIRE )
 					{
-						if ( race == VAMPIRE && !MonsterData_t::nameMatchesSpecialNPCName(*myStats, "bram kindly") )
+						if ( race == VAMPIRE && stats[monsterclicked]->REPUTATION >= REP_BEFRIEND_VAMPIRE 
+							&& !MonsterData_t::nameMatchesSpecialNPCName(*myStats, "bram kindly") )
 						{
 							canAlly = true;
 						}
 					}
 					else if ( stats[monsterclicked]->type == SUCCUBUS || stats[monsterclicked]->type == INCUBUS )
 					{
-						if ( race == INCUBUS || race == SUCCUBUS )
+						if ( (race == INCUBUS || race == SUCCUBUS) && stats[monsterclicked]->REPUTATION >= REP_BEFRIEND_FOOCUBI )
 						{
 							canAlly = true;
 						}
@@ -1717,21 +1718,21 @@ bool makeFollower(int monsterclicked, bool ringconflict, char namesays[64],
 					}
 					else if ( stats[monsterclicked]->type == GOATMAN )
 					{
-						if ( race == GOATMAN )
+						if ( race == GOATMAN && stats[monsterclicked]->REPUTATION >= REP_BEFRIEND_GOATMAN)
 						{
 							canAlly = true;
 						}
 					}
 					else if ( stats[monsterclicked]->type == GOBLIN )
 					{
-						if ( race == GOBLIN )
+						if ( race == GOBLIN && stats[monsterclicked]->REPUTATION >= REP_BEFRIEND_GOBLIN)
 						{
 							canAlly = true;
 						}
 					}
 					else if ( stats[monsterclicked]->type == RAT )
 					{
-						if ( race == RAT )
+						if ( race == RAT && stats[monsterclicked]->REPUTATION >= REP_BEFRIEND_RAT)
 						{
 							canAlly = true;
 						}
@@ -1745,28 +1746,29 @@ bool makeFollower(int monsterclicked, bool ringconflict, char namesays[64],
 					}
 					else if ( stats[monsterclicked]->type == SPIDER )
 					{
-						if ( race == SPIDER	|| race == SCARAB || race == SCORPION )
+						if ( (race == SPIDER || race == SCARAB || race == SCORPION) && stats[monsterclicked]->REPUTATION >= REP_BEFRIEND_SPIDER )
 						{
 							canAlly = true;
 						}
 					}
 					else if ( stats[monsterclicked]->type == INSECTOID )
 					{
-						if ( race == INSECTOID || race == SCARAB || race == SCORPION )
+						if ( (race == INSECTOID || race == SCARAB || race == SCORPION) && stats[monsterclicked]->REPUTATION >= REP_BEFRIEND_INSECTOID)
 						{
 							canAlly = true;
 						}
 					}
 					else if ( stats[monsterclicked]->type == TROLL )
 					{
-						if ( race == TROLL )
+						if ( race == TROLL && stats[monsterclicked]->REPUTATION >= REP_BEFRIEND_TROLL )
 						{
 							canAlly = true;
 						}
 					}
 					else if ( stats[monsterclicked]->type == CREATURE_IMP )
 					{
-						if ( race == CREATURE_IMP && !(!strncmp(map.name, "Boss", 4) || !strncmp(map.name, "Hell Boss", 9)) )
+						if ( race == CREATURE_IMP && !(!strncmp(map.name, "Boss", 4) || !strncmp(map.name, "Hell Boss", 9)) 
+						&& stats[monsterclicked]->REPUTATION >= REP_BEFRIEND_IMP )
 						{
 							canAlly = true; // non-boss imps
 						}

@@ -350,6 +350,11 @@ void Stat::clearStats()
 	this->HUNGER = 1000;
 	this->LVL = 1;
 	this->EXP = 0;
+
+	this->POTHEALING = 0;
+	this->TRAUMA = 0;
+	this->REPUTATION = 0;
+	
 	list_FreeAll(&this->FOLLOWERS);
 	for (x = 0; x < std::max(NUMPROFICIENCIES, NUMEFFECTS); x++)
 	{
@@ -581,6 +586,10 @@ Stat* Stat::copyStats()
 	newStat->LVL = this->LVL;
 	newStat->GOLD = this->GOLD;
 	newStat->HUNGER = this->HUNGER;
+
+	newStat->POTHEALING = this->POTHEALING;
+	newStat->TRAUMA = this->TRAUMA;
+	newStat->REPUTATION = this->REPUTATION;
 
 	for (c = 0; c < NUMPROFICIENCIES; c++)
 	{

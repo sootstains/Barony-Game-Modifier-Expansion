@@ -68,6 +68,7 @@ static const int EFF_PWR = 43;
 static const int EFF_AGILITY = 44;
 static const int EFF_RALLY = 45;
 static const int EFF_MARIGOLD = 46;
+static const int EFF_POTION_HEALING = 47;
 static const int NUMEFFECTS = 64;
 
 // stats
@@ -107,6 +108,17 @@ static const int SKILL_LEVEL_SKILLED = 40;
 static const int SKILL_LEVEL_EXPERT = 60;
 static const int SKILL_LEVEL_MASTER = 80;
 static const int SKILL_LEVEL_LEGENDARY = 100;
+
+static const int REP_BEFRIEND_SKELETON = 50;
+static const int REP_BEFRIEND_VAMPIRE = 50;
+static const int REP_BEFRIEND_FOOCUBI = 40;
+static const int REP_BEFRIEND_GOATMAN = 60;
+static const int REP_BEFRIEND_GOBLIN = 60;
+static const int REP_BEFRIEND_INSECTOID = 80;
+static const int REP_BEFRIEND_RAT = 20;
+static const int REP_BEFRIEND_SPIDER = 40;
+static const int REP_BEFRIEND_TROLL = 50;
+static const int REP_BEFRIEND_IMP = 60;
 
 static const int CAPSTONE_LOCKPICKING_UNLOCK = SKILL_LEVEL_LEGENDARY;
 static const int CAPSTONE_UNLOCK_LEVEL[NUMPROFICIENCIES] =
@@ -277,6 +289,11 @@ public:
 	{
 		PROFICIENCIES[skill] = value;
 	}
+
+	Sint32 POTHEALING;
+	Sint32 TRAUMA;
+	Sint32 REPUTATION;
+
 	int getGoldWeight() const;
 	bool EFFECTS[NUMEFFECTS];
 	Sint32 EFFECTS_TIMERS[NUMEFFECTS];
