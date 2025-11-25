@@ -9098,6 +9098,7 @@ void Entity::attack(int pose, int charge, Entity* target)
 
 					bool backstab = false;
 					bool flanking = false;
+					bool stealthleveled = false;
 					if ( player >= 0 && !monsterIsImmobileTurret(hit.entity, hitstats) && !(hitstats->type == MIMIC) )
 					{
 						real_t hitAngle = hit.entity->yawDifferenceFromEntity(this);
@@ -9157,6 +9158,7 @@ void Entity::attack(int pose, int charge, Entity* target)
 										if ( local_rng.rand() % 4 > skillchance )
 										{
 											this->increaseSkill(PRO_STEALTH);
+											stealthleveled = true;
 										}
 									}
 								}
@@ -9310,9 +9312,10 @@ void Entity::attack(int pose, int charge, Entity* target)
 
 					if (player >= 0 && backstab && hitstats->HP <= 0)
 					{
-						if (local_rng.rand() % 2 == 0)
+						if (local_rng.rand() % 3 == 0 && !stealthleveled)
 						{
 							this->increaseSkill(PRO_STEALTH); // assassinated!
+							stealthleveled = true;
 						}
 					}
 
