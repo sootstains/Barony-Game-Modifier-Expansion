@@ -5450,10 +5450,18 @@ real_t Entity::getACEffectiveness(Entity* my, Stat* myStats, bool isPlayer, Enti
 	{
 		return 1.0;
 	}
-
+	double defendingACE = 1.0;
 	if ( myStats->defending )
 	{
-		return 1.0;
+		if (myStats->shield && itemCategory(myStats->shield) != ARMOR)
+		{
+			defendingACE = 0.75;
+		}
+		else
+		{
+			defendingACE = 1.0;
+		}
+		//return 1.0;
 	}
 
 	int blessings = 0;
@@ -5496,7 +5504,19 @@ real_t Entity::getACEffectiveness(Entity* my, Stat* myStats, bool isPlayer, Enti
 		blessings += cursedItemIsBuff ? abs(myStats->amulet->beatitude) : myStats->amulet->beatitude;
 	}
 	outNumBlessings = blessings;
-	return std::max(0.0, std::min(1.0, .75 + 0.025 * blessings));
+
+	double ACEtoUse = 0.75;
+	if (my->behavior == &actPlayer);
+	{
+		ACEtoUse = 0.5;
+	}
+	if (myStats->defending)
+	{
+		ACEtoUse = defendingACE;
+	}
+	
+	return std::max(0.0, std::min(1.0, ACEtoUse + 0.025 * blessings));
+	//return std::max(0.0, std::min(1.0, .75 + 0.025 * blessings));
 }
 
 /*-------------------------------------------------------------------------------
@@ -5558,11 +5578,18 @@ Sint32 Entity::getAttack(Entity* my, Stat* myStats, bool isPlayer)
 	{
 		int atk = statGetSTR(myStats, my) + statGetDEX(myStats, my);
 		atk = std::min(atk / 2, atk);
-		attack += atk;
+		attack = (1 + atk * 0.065) * attack;
 	}
 	else
 	{
-		attack += statGetSTR(myStats, my);
+		if (my->behavior == &actPlayer)
+		{
+			attack = (1 + statGetSTR(myStats, my) * 0.05) * attack;
+		}
+		else
+		{
+			attack += statGetSTR(myStats, my);
+		}
 	}
 
 	return attack;
@@ -5590,11 +5617,15 @@ Sint32 Entity::getRangedAttack()
 	if ( entitystats->weapon )
 	{
 		attack += entitystats->weapon->weaponGetAttack(entitystats);
-		attack += getDEX();
 		if ( behavior == &actMonster )
 		{
+			attack += getDEX();
 			attack += getPER(); // monsters take PER into their ranged attacks to avoid having to increase their speed.
 			attack += entitystats->getModifiedProficiency(PRO_RANGED) / 20; // 0 to 5 bonus attack for monsters
+		}
+		else if (behavior == &actPlayer)
+		{
+			attack = (1 + getDEX() * 0.065) * attack;
 		}
 	}
 	else
@@ -5645,8 +5676,15 @@ Sint32 Entity::getThrownAttack()
 		else
 		{
 			int dex = getDEX() / 4;
-			attack += dex;
 			attack += entitystats->weapon->weaponGetAttack(entitystats);
+			if (behavior == &actMonster)
+			{
+				attack += dex;
+			}
+			else if (behavior == &actPlayer)
+			{
+				attack = (1 + dex * 0.065) * attack;
+			}
 			attack += entitystats->getModifiedProficiency(PRO_RANGED) / 10; // 0 to 10 bonus attack.
 		}
 	}
@@ -12954,6 +12992,18 @@ void Entity::awardXP(Entity* src, bool share, bool root)
 	{
 		baseXp = 5;
 	}
+
+	int lvlDiff = srcStats->LVL - destStats->LVL;
+	if (lvlDiff < -1)
+	{
+		int penaltyCounter = abs(lvlDiff) / 2; // for every 2 levels difference, apply penalty 1 time
+		int penalty = baseXp / 5; // penalty subtracts 20% of base exp each time
+		penalty = std::max(1, penalty);
+		baseXp = baseXp - (penalty * penaltyCounter);
+		baseXp = std::max(1, baseXp); // never reduce base exp below 1
+	}
+
+
 	int xpGain = baseXp + local_rng.rand() % std::max(1, baseXp) + std::max(0, srcStats->LVL - destStats->LVL) * baseXp;
 	if ( srcStats->MISC_FLAGS[STAT_FLAG_XP_PERCENT_AWARD] > 0 )
 	{
@@ -19924,7 +19974,7 @@ void Entity::setRangedProjectileAttack(Entity& marksman, Stat& myStats, int opti
 		else
 		{
 			this->arrowQuiverType = myStats.shield->type;
-			attack += myStats.shield->weaponGetAttack(&myStats);
+			attack += myStats.shield->weaponGetAttack(&myStats) * (getDEX() * 0.065);
 		}
 		switch ( arrowQuiverType )
 		{
