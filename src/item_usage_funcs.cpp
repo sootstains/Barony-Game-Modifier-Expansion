@@ -1975,9 +1975,9 @@ bool item_PotionHealing(Item*& item, Entity* entity, Entity* usedBy, bool should
 
 	int oldHP = entity->getHP();
 
-	int splitamount = amount * 0.25;
+	int fixrounding = (amount % 4 == 0) ? 0 : 1;
 
-	entity->modHP(splitamount);
+	entity->modHP(amount * 0.25 + fixrounding);
 
 	int heal = std::max(entity->getHP() - oldHP, 0);
 	if ( heal > 0 )
@@ -2003,7 +2003,7 @@ bool item_PotionHealing(Item*& item, Entity* entity, Entity* usedBy, bool should
 
 		stats->EFFECTS[EFF_POTION_HEALING] = true;
 		stats->EFFECTS_TIMERS[EFF_POTION_HEALING] = 25 * TICKS_PER_SECOND;
-		stats->POTHEALING = splitamount * 3;
+		stats->POTHEALING = amount * 0.75;
 
 		//messagePlayerColor(player, MESSAGE_STATUS, color, Language::get(773));
 		messagePlayerColor(player, MESSAGE_STATUS, color, "Your wounds begin to seal.");
@@ -2132,9 +2132,7 @@ bool item_PotionExtraHealing(Item*& item, Entity* entity, Entity* usedBy, bool s
 
 	int oldHP = entity->getHP();
 
-	int splitamount = amount * 0.25;
-
-	entity->modHP(amount);
+	entity->modHP(amount * 0.25);
 
 	int heal = std::max(entity->getHP() - oldHP, 0);
 	if ( heal > 0 )
@@ -2159,7 +2157,7 @@ bool item_PotionExtraHealing(Item*& item, Entity* entity, Entity* usedBy, bool s
 
 		stats->EFFECTS[EFF_POTION_HEALING] = true;
 		stats->EFFECTS_TIMERS[EFF_POTION_HEALING] = 25 * TICKS_PER_SECOND;
-		stats->POTHEALING = splitamount * 3;
+		stats->POTHEALING = amount * 0.75;
 
 		messagePlayerColor(player, MESSAGE_STATUS, color, "Your wounds begin to seal.");
 		//messagePlayerColor(player, MESSAGE_STATUS, color, Language::get(773));
