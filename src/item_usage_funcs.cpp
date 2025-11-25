@@ -2132,7 +2132,9 @@ bool item_PotionExtraHealing(Item*& item, Entity* entity, Entity* usedBy, bool s
 
 	int oldHP = entity->getHP();
 
-	entity->modHP(amount * 0.25);
+	int fixrounding = (amount % 4 == 0) ? 0 : 1;
+
+	entity->modHP(amount * 0.25 + fixrounding);
 
 	int heal = std::max(entity->getHP() - oldHP, 0);
 	if ( heal > 0 )
