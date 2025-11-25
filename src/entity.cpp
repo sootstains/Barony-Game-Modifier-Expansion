@@ -9139,7 +9139,22 @@ void Entity::attack(int pose, int charge, Entity* target)
 									}
 									else
 									{
-										if ( local_rng.rand() % 4 > 0 )
+										int skillchance = 0;
+										int stealth = stats[player]->getProficiency(PRO_STEALTH);
+										if (stealth >= SKILL_LEVEL_EXPERT)
+										{
+											skillchance = 3; // no more learning
+										}
+										else if (stealth >= SKILL_LEVEL_SKILLED)
+										{
+											skillchance = 2; // reduced learning
+										}
+										else if (stealth >= SKILL_LEVEL_BASIC)
+										{
+											skillchance = 1; // still some learning
+										}
+
+										if ( local_rng.rand() % 4 > skillchance )
 										{
 											this->increaseSkill(PRO_STEALTH);
 										}
@@ -9292,6 +9307,14 @@ void Entity::attack(int pose, int charge, Entity* target)
 
 					Sint32 oldHP = hitstats->HP;
 					hit.entity->modHP(-damage); // do the damage
+
+					if (player >= 0 && backstab && hitstats->HP <= 0)
+					{
+						if (local_rng.rand() % 2 == 0)
+						{
+							this->increaseSkill(PRO_STEALTH); // assassinated!
+						}
+					}
 
 					bool skillIncreased = false;
 					// skill increase
