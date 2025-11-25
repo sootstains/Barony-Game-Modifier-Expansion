@@ -13045,6 +13045,11 @@ void Entity::awardXP(Entity* src, bool share, bool root)
 		baseXp = std::max(1, baseXp); // never reduce base exp below 1
 	}
 
+	if ( src->monsterAllyGetPlayerLeader() )
+	{
+		return;
+	}
+
 
 	int xpGain = baseXp + local_rng.rand() % std::max(1, baseXp) + std::max(0, srcStats->LVL - destStats->LVL) * baseXp;
 	if ( srcStats->MISC_FLAGS[STAT_FLAG_XP_PERCENT_AWARD] > 0 )
