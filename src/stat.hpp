@@ -120,6 +120,9 @@ static const int REP_BEFRIEND_SPIDER = 40;
 static const int REP_BEFRIEND_TROLL = 50;
 static const int REP_BEFRIEND_IMP = 60;
 
+static const double ATTACK_SCALING_STR = 0.065;
+static const double ATTACK_SCALING_DEX = 0.065;
+
 static const int CAPSTONE_LOCKPICKING_UNLOCK = SKILL_LEVEL_LEGENDARY;
 static const int CAPSTONE_UNLOCK_LEVEL[NUMPROFICIENCIES] =
 {

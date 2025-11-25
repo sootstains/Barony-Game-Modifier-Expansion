@@ -5616,7 +5616,7 @@ Sint32 Entity::getAttack(Entity* my, Stat* myStats, bool isPlayer)
 	{
 		if (my->behavior == &actPlayer)
 		{
-			attack = (1 + statGetSTR(myStats, my) * 0.05) * attack;
+			attack = (1 + statGetSTR(myStats, my) * ATTACK_SCALING_STR) * attack;
 		}
 		else
 		{
@@ -5657,7 +5657,7 @@ Sint32 Entity::getRangedAttack()
 		}
 		else if (behavior == &actPlayer)
 		{
-			attack = (1 + getDEX() * 0.065) * attack;
+			attack = (1 + getDEX() * ATTACK_SCALING_DEX) * attack;
 		}
 	}
 	else
@@ -5693,7 +5693,14 @@ Sint32 Entity::getThrownAttack()
 		if ( itemCategory(entitystats->weapon) == THROWN )
 		{
 			int dex = getDEX() / 4;
-			attack += dex;
+			if (behavior == &actMonster)
+			{
+				attack += dex;
+			}
+			else if (behavior == &actPlayer)
+			{
+				attack = (1 + dex * ATTACK_SCALING_DEX) * attack;
+			}
 			attack += entitystats->weapon->weaponGetAttack(entitystats);
 			attack *= thrownDamageSkillMultipliers[std::min(skillLVL, 5)];
 		}
@@ -5715,7 +5722,7 @@ Sint32 Entity::getThrownAttack()
 			}
 			else if (behavior == &actPlayer)
 			{
-				attack = (1 + dex * 0.065) * attack;
+				attack = (1 + dex * ATTACK_SCALING_DEX) * attack;
 			}
 			attack += entitystats->getModifiedProficiency(PRO_RANGED) / 10; // 0 to 10 bonus attack.
 		}
@@ -20023,7 +20030,7 @@ void Entity::setRangedProjectileAttack(Entity& marksman, Stat& myStats, int opti
 		else
 		{
 			this->arrowQuiverType = myStats.shield->type;
-			attack += myStats.shield->weaponGetAttack(&myStats) * (getDEX() * 0.065);
+			attack += myStats.shield->weaponGetAttack(&myStats) * (1 + getDEX() * ATTACK_SCALING_DEX);
 		}
 		switch ( arrowQuiverType )
 		{
