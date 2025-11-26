@@ -7711,7 +7711,22 @@ void Entity::attack(int pose, int charge, Entity* target)
 				}
 				else if ( myStats->weapon->type == CROSSBOW || myStats->weapon->type == HEAVY_CROSSBOW )
 				{
-					entity = newEntity(167, 1, map.entities, nullptr); // bolt
+					if (behavior == &actPlayer)
+					{
+						if ( myStats->shield && itemTypeIsQuiver(myStats->shield->type) ) // player needs ammo!
+						{
+							entity = newEntity(167, 1, map.entities, nullptr); // bolt
+						}
+						else if ( player >= 0 && players[player]->isLocalPlayer() )
+						{
+							messagePlayer(player, MESSAGE_EQUIPMENT, "Your crossbow isn't loaded!");
+						}
+					}
+					else
+					{
+						entity = newEntity(167, 1, map.entities, nullptr); // bolt
+					}
+
 					if ( myStats->weapon->type == HEAVY_CROSSBOW )
 					{
 						playSoundEntity(this, 411 + local_rng.rand() % 3, 128);
@@ -7727,7 +7742,21 @@ void Entity::attack(int pose, int charge, Entity* target)
 				}
 				else
 				{
-					entity = newEntity(166, 1, map.entities, nullptr); // arrow
+					if (behavior == &actPlayer)
+					{
+						if ( myStats->shield && itemTypeIsQuiver(myStats->shield->type) ) // player needs ammo!
+						{
+							entity = newEntity(166, 1, map.entities,nullptr); //arrow
+						}
+						else if ( player >= 0 && players[player]->isLocalPlayer() )
+						{
+							messagePlayer(player, MESSAGE_EQUIPMENT, "You need to nock an arrow!");
+						}
+					}
+					else
+					{
+						entity = newEntity(166, 1, map.entities, nullptr); // arrow
+					}
 					playSoundEntity(this, 239 + local_rng.rand() % 3, 96);
 				}
 				if ( !entity )
@@ -15230,7 +15259,7 @@ bool isLevitating(Stat* mystats)
 			{
 				if ( players[i]->entity->getStats() == mystats )
 				{
-					if ( mystats->type == CREATURE_IMP )
+					if ( mystats->type == CREATURE_IMP || mystats->EFFECTS[EFF_KNOCKBACK] )
 					{
 						return true;
 					}
@@ -15282,6 +15311,10 @@ bool isLevitating(Stat* mystats)
 		{
 			return true;
 		}
+	}
+	if ( mystats->EFFECTS[EFF_KNOCKBACK] )
+	{
+		return true;
 	}
 
 	return false;
@@ -20121,6 +20154,11 @@ bool Entity::setArrowProjectileProperties(int weaponType)
 		this->pitch = -PI / 32;
 		this->arrowFallSpeed = 0.1;
 		this->arrowBoltDropOffRange = 5; // ticks before projectile starts falling.
+
+		if (weaponType == SLING)
+		{
+			this->arrowBoltDropOffRange = 2;
+		}
 
 		this->vel_x = cos(this->yaw) * this->arrowSpeed;
 		this->vel_y = sin(this->yaw) * this->arrowSpeed;

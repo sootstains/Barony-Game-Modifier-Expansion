@@ -206,6 +206,11 @@ void createChestInventory(Entity* my, int chestType)
 		{
 			newItem(MASK_GRASS_SPRIG, static_cast<Status>(WORN + rng.rand() % 3), 0, 1, rng.rand(), false, inventory);
 		}
+		else if ( rng.rand() % 15 == 0)
+		{
+			int arrowcount = 5 + rng.rand() % 11;
+			newItem(QUIVER_HUNTING, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
+		}
 		break;
 	case 3:
 		//Treasures, jewelry, gems 'n stuff.
@@ -230,11 +235,17 @@ void createChestInventory(Entity* my, int chestType)
 				//newItem(static_cast<ItemType>(RING_ADORNMENT + rng.rand() % 12), static_cast<Status>(WORN + rng.rand() % 3), 0, 1, rng.rand(), false, inventory);
 				newItem(itemLevelCurve(RING, 0, currentlevel + 5, rng), static_cast<Status>(WORN + rng.rand() % 3), 0, 1, rng.rand(), false, inventory);
 			}
-			else
+			else if (rng.rand() % 3)
 			{
 				//Spawn an amulet.
 				//newItem(static_cast<ItemType>(AMULET_SEXCHANGE + rng.rand() % 6), static_cast<Status>(WORN + rng.rand() % 3), 0, 1, rng.rand(), false, inventory);
 				newItem(itemLevelCurve(AMULET, 0, currentlevel + 5, rng), static_cast<Status>(WORN + rng.rand() % 3), 0, 1, rng.rand(), false, inventory);
+			}
+			else
+			{
+				int arrowcount = 5 + rng.rand() % 11;
+				ItemType arrowtype = QUIVER_CRYSTAL;
+				newItem(arrowtype, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
 			}
 		}
 		break;
@@ -260,6 +271,24 @@ void createChestInventory(Entity* my, int chestType)
 			//	newItem(CROSSBOW, static_cast<Status>(WORN + rng.rand() % 3), 0, 1, rng.rand(), false, inventory);
 			//}
 			newItem(itemLevelCurve(WEAPON, minimumQuality, currentlevel + 5, rng), static_cast<Status>(WORN + rng.rand() % 3), 0, 1, rng.rand(), false, inventory);
+			if (rng.rand() % 15 == 0)
+			{
+				int arrowcount = 10 + rng.rand() % 11;
+				ItemType arrowtype = static_cast<ItemType>(QUIVER_SILVER + rng.rand()% 7);
+				newItem(arrowtype, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
+			}
+			else if (rng.rand() % 5 == 0)
+			{
+				int arrowcount = 5 + rng.rand() % 11;
+				ItemType arrowtype = QUIVER_SILVER;
+				newItem(arrowtype, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
+			}
+			else if (rng.rand() % 4 == 0)
+			{
+				int arrowcount = 5 + rng.rand() % 11;
+				ItemType arrowtype = QUIVER_LIGHTWEIGHT;
+				newItem(arrowtype, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
+			}
 		}
 		break;
 		case 1:
@@ -356,13 +385,33 @@ void createChestInventory(Entity* my, int chestType)
 			//}
 
 			newItem(itemLevelCurve(WEAPON, minimumQuality, currentlevel + 5, rng), static_cast<Status>(WORN + rng.rand() % 3), 0, 1, rng.rand(), false, inventory);
+			
+			if (rng.rand() % 10 == 0)
+			{
+				int arrowcount = 5 + rng.rand() % 11;
+				ItemType arrowtype = QUIVER_PIERCE;
+				newItem(arrowtype, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
+			}
+			else if (rng.rand() % 5 == 0)
+			{
+				int arrowcount = 5 + rng.rand() % 16;
+				ItemType arrowtype = QUIVER_LIGHTWEIGHT;
+				newItem(arrowtype, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
+			}
+			else if (rng.rand() % 5 == 0)
+			{
+				int arrowcount = 5 + rng.rand() % 11;
+				ItemType arrowtype = QUIVER_KNOCKBACK;
+				newItem(arrowtype, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
+			}
+
 			newItem(itemLevelCurve(ARMOR, minimumQuality, currentlevel + 5, rng), static_cast<Status>(WORN + rng.rand() % 3), 0, 1, rng.rand(), false, inventory);
 
 			// try for thrown items.
 			itemcount = 0 + rng.rand() % 2;
 			for ( i = 0; i < itemcount; ++i )
 			{
-				Item* thrown = newItem(itemLevelCurve(THROWN, minimumQuality, currentlevel, rng), WORN, 0, 3 + rng.rand() % 3, rng.rand(), false, inventory);
+				Item* thrown = newItem(itemLevelCurve(THROWN, minimumQuality, currentlevel, rng), WORN, 0, 1 + rng.rand() % 3, rng.rand(), false, inventory);
 				if ( thrown )
 				{
 					if ( thrown->type >= BRONZE_TOMAHAWK && thrown->type <= CRYSTAL_SHURIKEN )
@@ -412,12 +461,18 @@ void createChestInventory(Entity* my, int chestType)
 			{
 				newItem(MASK_MOUTHKNIFE, durability, 0, 1, rng.rand(), false, inventory);
 			}
+			else if ( rng.rand() % 5 == 0 )
+			{
+				int arrowcount = 5 + rng.rand() % 21;
+				ItemType arrowtype = QUIVER_KNOCKBACK;
+				newItem(arrowtype, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
+			}
 			break;
 		case 2:
 			itemcount = 1 + rng.rand() % 2;
 			for ( i = 0; i < itemcount; ++i )
 			{
-				Item* thrown = newItem(itemLevelCurve(THROWN, minimumQuality, currentlevel, rng), WORN, 0, 3 + rng.rand() % 3, rng.rand(), false, inventory);
+				Item* thrown = newItem(itemLevelCurve(THROWN, minimumQuality, currentlevel, rng), WORN, 0, 1 + rng.rand() % 3, rng.rand(), false, inventory);
 				if ( thrown )
 				{
 					if ( thrown->type >= BRONZE_TOMAHAWK && thrown->type <= CRYSTAL_SHURIKEN )
@@ -585,6 +640,18 @@ void createChestInventory(Entity* my, int chestType)
 		{
 			newItem(MASK_PLAGUE, static_cast<Status>(WORN + rng.rand() % 3),
 				0, 1, rng.rand(), false, inventory);
+		}
+		else if ( rng.rand() % 10 == 0 )
+		{
+			int arrowcount = 5 + rng.rand() % 6;
+			ItemType arrowtype = QUIVER_HUNTING;
+			newItem(arrowtype, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
+		}
+		else if ( rng.rand() % 10 == 0 )
+		{
+			int arrowcount = 5 + rng.rand() % 11;
+			ItemType arrowtype = QUIVER_FIRE;
+			newItem(arrowtype, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
 		}
 		break;
 	case 8:
