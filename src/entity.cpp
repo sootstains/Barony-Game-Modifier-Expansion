@@ -9127,7 +9127,6 @@ void Entity::attack(int pose, int charge, Entity* target)
 
 					bool backstab = false;
 					bool flanking = false;
-					bool stealthleveled = false;
 					if ( player >= 0 && !monsterIsImmobileTurret(hit.entity, hitstats) && !(hitstats->type == MIMIC) )
 					{
 						real_t hitAngle = hit.entity->yawDifferenceFromEntity(this);
@@ -9171,23 +9170,22 @@ void Entity::attack(int pose, int charge, Entity* target)
 									{
 										int skillchance = 0;
 										int stealth = stats[player]->getProficiency(PRO_STEALTH);
-										if (stealth >= SKILL_LEVEL_EXPERT)
+										if (stealth < SKILL_LEVEL_BASIC)
 										{
-											skillchance = 3; // no more learning
+											skillchance = 4; // 33% chance
 										}
-										else if (stealth >= SKILL_LEVEL_SKILLED)
+										else if (stealth < SKILL_LEVEL_SKILLED)
 										{
-											skillchance = 2; // reduced learning
+											skillchance = 5; // 16.67% chance
 										}
-										else if (stealth >= SKILL_LEVEL_BASIC)
+										else
 										{
-											skillchance = 1; // still some learning
+											skillchance = 6; // 0% chance
 										}
 
-										if ( local_rng.rand() % 4 > skillchance )
+										if ( local_rng.rand() % 6 >= skillchance )
 										{
 											this->increaseSkill(PRO_STEALTH);
-											stealthleveled = true;
 										}
 									}
 								}
@@ -9341,10 +9339,9 @@ void Entity::attack(int pose, int charge, Entity* target)
 
 					if (player >= 0 && backstab && hitstats->HP <= 0)
 					{
-						if (local_rng.rand() % 3 == 0 && !stealthleveled)
+						if (local_rng.rand() % 3 > 0)
 						{
 							this->increaseSkill(PRO_STEALTH); // assassinated!
-							stealthleveled = true;
 						}
 					}
 

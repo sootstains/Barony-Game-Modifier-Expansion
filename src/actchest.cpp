@@ -285,7 +285,7 @@ void createChestInventory(Entity* my, int chestType)
 			}
 			else if (rng.rand() % 4 == 0)
 			{
-				int arrowcount = 5 + rng.rand() % 11;
+				int arrowcount = 15 + rng.rand() % 11;
 				ItemType arrowtype = QUIVER_LIGHTWEIGHT;
 				newItem(arrowtype, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
 			}
@@ -388,19 +388,19 @@ void createChestInventory(Entity* my, int chestType)
 			
 			if (rng.rand() % 10 == 0)
 			{
-				int arrowcount = 5 + rng.rand() % 11;
+				int arrowcount = 5 + rng.rand() % 16;
 				ItemType arrowtype = QUIVER_PIERCE;
 				newItem(arrowtype, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
 			}
 			else if (rng.rand() % 5 == 0)
 			{
-				int arrowcount = 5 + rng.rand() % 16;
+				int arrowcount = 10 + rng.rand() % 16;
 				ItemType arrowtype = QUIVER_LIGHTWEIGHT;
 				newItem(arrowtype, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
 			}
 			else if (rng.rand() % 5 == 0)
 			{
-				int arrowcount = 5 + rng.rand() % 11;
+				int arrowcount = 10 + rng.rand() % 11;
 				ItemType arrowtype = QUIVER_KNOCKBACK;
 				newItem(arrowtype, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
 			}
@@ -463,7 +463,7 @@ void createChestInventory(Entity* my, int chestType)
 			}
 			else if ( rng.rand() % 5 == 0 )
 			{
-				int arrowcount = 5 + rng.rand() % 21;
+				int arrowcount = 15 + rng.rand() % 11;
 				ItemType arrowtype = QUIVER_KNOCKBACK;
 				newItem(arrowtype, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory); // Arrows for the needy
 			}
