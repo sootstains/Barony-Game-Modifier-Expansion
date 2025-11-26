@@ -15271,7 +15271,7 @@ bool isLevitating(Stat* mystats)
 		{
 			if ( players[i]->entity->getStats() == mystats )
 			{
-				if ( players[i]->entity->effectShapeshift == CREATURE_IMP )
+				if ( players[i]->entity->effectShapeshift == CREATURE_IMP || mystats->EFFECTS[EFF_KNOCKBACK] )
 				{
 					return true;
 				}
@@ -15308,10 +15308,6 @@ bool isLevitating(Stat* mystats)
 		{
 			return true;
 		}
-	}
-	if ( mystats->EFFECTS[EFF_KNOCKBACK] )
-	{
-		return true;
 	}
 
 	return false;
