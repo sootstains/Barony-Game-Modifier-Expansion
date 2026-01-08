@@ -2530,6 +2530,15 @@ void Entity::modHP(int amount)
 			Compendium_t::Events_t::eventUpdateCodex(skill[2], Compendium_t::CPDM_HP_LOST_TOTAL, "hp", oldHP - entitystats->HP);
 		}
 	}
+	if ( behavior == &actPlayer )
+	{
+		if ( players[this->skill[2]]->isLocalPlayer() )
+		{
+			static int modhpCounter = 0;
+			printlog("HP modified by %d (Occurred %d times this session)", amount, modhpCounter);
+			modhpCounter++;
+		}
+	}
 }
 
 /*-------------------------------------------------------------------------------
