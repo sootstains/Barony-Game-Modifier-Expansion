@@ -10902,6 +10902,13 @@ void Entity::attack(int pose, int charge, Entity* target)
 					}
 				}
 				Entity* entity = nullptr;
+
+				bool hasAmmo = false;
+				if ( myStats->shield && myStats->shield->type && itemTypeIsQuiver(myStats->shield->type) ) // check for ammunition
+				{
+					hasAmmo = true;
+				}
+
 				if ( myStats->weapon->type == SLING )
 				{
 					entity = newEntity(78, 1, map.entities, nullptr); // rock
@@ -10911,7 +10918,10 @@ void Entity::attack(int pose, int charge, Entity* target)
 					|| myStats->weapon->type == HEAVY_CROSSBOW
 					|| myStats->weapon->type == BLACKIRON_CROSSBOW )
 				{
-					entity = newEntity(167, 1, map.entities, nullptr); // bolt
+					if ( hasAmmo )
+					{
+						entity = newEntity(167, 1, map.entities, nullptr); // bolt
+					}
 					if ( myStats->weapon->type == HEAVY_CROSSBOW )
 					{
 						playSoundEntity(this, 411 + local_rng.rand() % 3, 128);
@@ -10927,7 +10937,10 @@ void Entity::attack(int pose, int charge, Entity* target)
 				}
 				else
 				{
-					entity = newEntity(166, 1, map.entities, nullptr); // arrow
+					if ( hasAmmo )
+					{
+						entity = newEntity(166, 1, map.entities, nullptr); // arrow
+					}
 					playSoundEntity(this, 239 + local_rng.rand() % 3, 96);
 				}
 				if ( !entity )
@@ -27384,6 +27397,12 @@ bool Entity::setArrowProjectileProperties(int weaponType)
 		this->pitch = -PI / 32;
 		this->arrowFallSpeed = 0.1;
 		this->arrowBoltDropOffRange = 5; // ticks before projectile starts falling.
+
+		if ( weaponType == SLING )
+		{
+			this->arrowFallSpeed = 0.125;
+			this->arrowBoltDropOffRange = 3;
+		}
 
 		this->vel_x = cos(this->yaw) * this->arrowSpeed;
 		this->vel_y = sin(this->yaw) * this->arrowSpeed;

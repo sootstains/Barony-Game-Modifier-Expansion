@@ -957,9 +957,9 @@ static const std::vector<int> enchantedFeatherScrollsFixedList =
 	SCROLL_ENCHANTARMOR
 };
 static const int ENCHANTED_FEATHER_MAX_DURABILITY = 101;
-static const int QUIVER_MAX_AMMO_QTY = 51;
+static const int QUIVER_MAX_AMMO_QTY = 26;
 static const int SCRAP_MAX_STACK_QTY = 101;
-static const int THROWN_GEM_MAX_STACK_QTY = 9;
+static const int THROWN_GEM_MAX_STACK_QTY = 3;
 static const int MAGICSTAFF_SCEPTER_CHARGE_MAX = 101;
 static const int TOME_APPEARANCE_MAX = 1024;
 

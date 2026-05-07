@@ -5836,11 +5836,11 @@ void actHudArrowModel(Entity* my)
 		}
 	}
 
-	my->sprite = 934;
+	my->sprite = 0; // need ammunition
 
 	if ( crossbow )
 	{
-		my->sprite = 976;
+	my->sprite = 0; // need ammunition
 	}
 	else if ( stats[HUDSHIELD_PLAYERNUM]->shield && itemTypeIsQuiver(stats[HUDSHIELD_PLAYERNUM]->shield->type) )
 	{
