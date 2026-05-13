@@ -10986,7 +10986,7 @@ void Entity::attack(int pose, int charge, Entity* target)
 					|| myStats->weapon->type == HEAVY_CROSSBOW
 					|| myStats->weapon->type == BLACKIRON_CROSSBOW )
 				{
-					if ( hasAmmo )
+					if ( hasAmmo || this->behavior == &actMonster )
 					{
 						entity = newEntity(167, 1, map.entities, nullptr); // bolt
 					}
@@ -11005,7 +11005,7 @@ void Entity::attack(int pose, int charge, Entity* target)
 				}
 				else
 				{
-					if ( hasAmmo )
+					if ( hasAmmo || this->behavior == &actMonster )
 					{
 						entity = newEntity(166, 1, map.entities, nullptr); // arrow
 					}

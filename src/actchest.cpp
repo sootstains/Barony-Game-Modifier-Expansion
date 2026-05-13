@@ -253,7 +253,7 @@ void createChestInventory(Entity* my, int chestType)
 					itemLevelCurvePostProcess(my, item, rng, currentlevel, &lastGeneratedItemType, &lastGeneratedItemSpellType);
 				}
 			}
-			else
+			else if ( rng.rand() % 2 )
 			{
 				//Spawn an amulet.
 				//newItem(static_cast<ItemType>(AMULET_SEXCHANGE + rng.rand() % 6), static_cast<Status>(WORN + rng.rand() % 3), 0, 1, rng.rand(), false, inventory);
@@ -262,6 +262,10 @@ void createChestInventory(Entity* my, int chestType)
 				{
 					itemLevelCurvePostProcess(my, item, rng, currentlevel, &lastGeneratedItemType, &lastGeneratedItemSpellType);
 				}
+			}
+			else
+			{
+				newItem(QUIVER_CRYSTAL, SERVICABLE, 0, 10 + rng.rand() % 6, rng.rand(), false, inventory);
 			}
 		}
 		if ( rng.rand() % 4 > 0 ) // 75%
@@ -306,6 +310,49 @@ void createChestInventory(Entity* my, int chestType)
 			if ( item )
 			{
 				itemLevelCurvePostProcess(my, item, rng, currentlevel, &lastGeneratedItemType, &lastGeneratedItemSpellType);
+				if ( item && item->type && isRangedWeapon(item->type) )
+				{
+					ItemType quiverType = QUIVER_LIGHTWEIGHT;
+					int arrowcount = 0;
+					switch (rng.rand() % 7)
+					{
+						case 0:
+						quiverType = QUIVER_SILVER;
+						arrowcount = 5 + rng.rand() % 11;
+						break;
+
+						case 1:
+						quiverType = QUIVER_PIERCE;
+						arrowcount = 5 + rng.rand() % 6;
+						break;
+
+						case 2:
+						quiverType = QUIVER_LIGHTWEIGHT;
+						arrowcount = 10 + rng.rand() % 11;
+						break;
+
+						case 3:
+						quiverType = QUIVER_FIRE;
+						arrowcount = 10 + rng.rand() % 6;
+						break;
+
+						case 4:
+						quiverType = QUIVER_KNOCKBACK;
+						arrowcount = 10 + rng.rand() % 11;
+						break;
+
+						case 5:
+						quiverType = QUIVER_CRYSTAL;
+						arrowcount = 5 + rng.rand() % 11;
+						break;
+
+						case 6:
+						quiverType = QUIVER_HUNTING;
+						arrowcount = 5 + rng.rand() % 6;
+						break;
+					}
+					newItem(quiverType, SERVICABLE, 0, arrowcount, rng.rand(), false, inventory);
+				}
 			}
 		}
 		break;
@@ -410,6 +457,12 @@ void createChestInventory(Entity* my, int chestType)
 			if ( item )
 			{
 				itemLevelCurvePostProcess(my, item, rng, currentlevel, &lastGeneratedItemType, &lastGeneratedItemSpellType);
+
+				if ( item && item->type && isRangedWeapon(item->type) && rng.rand() % 2)
+				{
+					ItemType quiverType = rng.rand() % 2 ? QUIVER_LIGHTWEIGHT : QUIVER_KNOCKBACK;
+					newItem(quiverType, SERVICABLE, 0, 15 + rng.rand() % 11, rng.rand(), false, inventory);
+				}
 			}
 			item = newItem(itemLevelCurve(ARMOR, minimumQuality, currentlevel + 5, rng), static_cast<Status>(WORN + rng.rand() % 3), 0, 1, rng.rand(), false, inventory);
 			if ( item )
@@ -466,6 +519,10 @@ void createChestInventory(Entity* my, int chestType)
 			else if ( rng.rand() % 20 == 0 )
 			{
 				newItem(MASK_MOUTHKNIFE, durability, 0, 1, rng.rand(), false, inventory);
+			}
+			else if (rng.rand() % 4 == 0 )
+			{
+				newItem(QUIVER_KNOCKBACK, SERVICABLE, 0, 15 + rng.rand() % 11, rng.rand(), false, inventory);
 			}
 			break;
 		case 2:
@@ -747,6 +804,10 @@ void createChestInventory(Entity* my, int chestType)
 		{
 			newItem(MASK_PLAGUE, static_cast<Status>(WORN + rng.rand() % 3),
 				0, 1, rng.rand(), false, inventory);
+		}
+		else if ( rng.rand() % 3 == 0 )
+		{
+			newItem(QUIVER_HUNTING, SERVICABLE, 0, 10 + rng.rand() % 11, rng.rand(), false, inventory);
 		}
 		break;
 	case 8:
