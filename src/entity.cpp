@@ -11374,7 +11374,14 @@ void Entity::attack(int pose, int charge, Entity* target)
 		{
 			if ( flail )
 			{
-				strikeRange = STRIKERANGE * 1.5;
+				if ( charge >= Stat::getMaxAttackCharge(myStats) / 2 )
+				{
+					strikeRange = STRIKERANGE * 1.5; // longer range on crit
+				}
+				else
+				{
+					strikeRange = STRIKERANGE * 1.25; // reduced range!! op!!!
+				}
 				dist = lineTrace(this, x, y, yaw, strikeRange, LINETRACE_ATK_CHECK_FRIENDLYFIRE, false);
 				if ( behavior == &actMonster || charge >= Stat::getMaxAttackCharge(myStats) / 2 )
 				{
