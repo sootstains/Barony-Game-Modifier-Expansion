@@ -8150,19 +8150,87 @@ void Entity::handleEffects(Stat* myStats)
 
 real_t Entity::getACEffectiveness(Entity* my, Stat* myStats, bool isPlayer, Entity* attacker, Stat* attackerStats, int& outNumBlessings)
 {
+	real_t ACEffectiveness = 1.0;
+
 	if ( !myStats || !my )
 	{
-		return 1.0;
+		return ACEffectiveness;
+	}
+
+	if (my->behavior == &actMonster)
+	{
+		ACEffectiveness = 0.75;
+	}
+	else if (my->behavior == &actPlayer)
+	{
+		ACEffectiveness = 0.5;
 	}
 
 	if ( (myStats->defending && !(myStats->shield && !Item::doesItemProvideBeatitudeAC(myStats->shield->type)))
 		|| (myStats->parrying && myStats->weapon && itemCategory(myStats->weapon) == WEAPON) )
 	{
-		return 1.0;
+		if (my->behavior == &actMonster)
+		{
+			ACEffectiveness = 1.0;
+		}
+		else if (my->behavior == &actPlayer)
+		{
+			if (myStats->defending && myStats->shield && myStats->shield->type)
+			{
+				switch (myStats->shield->type)
+				{
+					case TOOL_TORCH:
+					ACEffectiveness = 0.7;
+					break;
+
+					case WOODEN_SHIELD:
+					ACEffectiveness = 0.75;
+					break;
+
+					case BRONZE_SHIELD:
+					ACEffectiveness = 0.8;
+					break;
+
+					case IRON_SHIELD:
+					ACEffectiveness = 0.825;
+					break;
+
+					case STEEL_SHIELD:
+					ACEffectiveness = 0.85;
+					break;
+
+					case STEEL_SHIELD_RESISTANCE:
+					ACEffectiveness = 0.85;
+					break;
+
+					case CRYSTAL_SHIELD:
+					ACEffectiveness = 0.9;
+					break;
+
+					case MIRROR_SHIELD:
+					ACEffectiveness = 1.0;
+					break;
+
+					case TOOL_FRYING_PAN:
+					ACEffectiveness = 0.8;
+					break;
+
+					default:
+					ACEffectiveness = Item::doesItemProvideBeatitudeAC(myStats->shield->type) ? 0.65 : 0.5;
+					break;
+				}
+			}
+
+			if (myStats->parrying && myStats->weapon && itemCategory(myStats->weapon) == WEAPON)
+			{
+				ACEffectiveness = 1.0;
+			}
+		}
 	}
 
 	int blessings = 0;
 	bool cursedItemIsBuff = shouldInvertEquipmentBeatitude(myStats);
+	double blessingFactor = 0.0125;
 
 	if ( myStats->helmet && Item::doesItemProvideBeatitudeAC(myStats->helmet->type) )
 	{
@@ -8201,7 +8269,7 @@ real_t Entity::getACEffectiveness(Entity* my, Stat* myStats, bool isPlayer, Enti
 		blessings += cursedItemIsBuff ? abs(myStats->amulet->beatitude) : myStats->amulet->beatitude;
 	}
 	outNumBlessings = blessings;
-	return std::max(0.0, std::min(1.0, .75 + 0.025 * blessings));
+	return std::max(0.0, std::min(1.0, ACEffectiveness + blessingFactor * blessings)); // reduce blessing strength by half, reduce passive ACE for players
 }
 
 real_t Entity::PlayerAttackMeleeStatFactor = 0.055;
@@ -12815,8 +12883,20 @@ void Entity::attack(int pose, int charge, Entity* target)
 					}
 
 					int numBlessings = 0;
+					double enoughAttackForArmorDamage = 0.0;
+					bool doArmorDamage = false;
+					
 					real_t targetACEffectiveness = Entity::getACEffectiveness(hit.entity, hitstats, hit.entity->behavior == &actPlayer, this, myStats, numBlessings);
+
+					enoughAttackForArmorDamage = myAttack * (1.0 - targetACEffectiveness);
+
 					int attackAfterReductions = static_cast<int>(std::max(0.0, ((myAttack * targetACEffectiveness - enemyAC))) + (1.0 - targetACEffectiveness) * myAttack);
+
+					if ( attackAfterReductions > enoughAttackForArmorDamage || !(hitstats->shield && hitstats->defending) )
+					{
+						doArmorDamage = true; // only deal armor damage if insufficient AC to block
+					}
+
 					if ( weaponskill == PRO_UNARMED )
 					{
 						damage = attackAfterReductions * weaponMultipliers;
@@ -13537,7 +13617,7 @@ void Entity::attack(int pose, int charge, Entity* target)
 					int armornum = 0;
 					bool isWeakArmor = false;
 					bool shieldIncreased = false;
-					if ( damage > 0 || (damage == 0 && !(hitstats->shield && hitstats->defending) && parriedDamage == 0) )
+					if ( doArmorDamage || (damage == 0 && !(hitstats->shield && hitstats->defending) && parriedDamage == 0) )
 					{
 						if ( behavior == &actMonster )
 						{
