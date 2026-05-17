@@ -64,7 +64,7 @@ void initGoblin(Entity* my, Stat* myStats)
 			// boss variants
 			bool potatoking = false;
 			const bool boss =
-			    rng.rand() % 50 == 0 &&
+			    rng.rand() % BOSS_MONSTER_SPAWN_CHANCE == 0 &&
 			    !my->flags[USERFLAG2] &&
 			    !myStats->MISC_FLAGS[STAT_FLAG_DISABLE_MINIBOSS];
 			if ( (boss || (*cvar_summonBosses && conductGameChallenges[CONDUCT_CHEATS_ENABLED])) && myStats->leader_uid == 0 )

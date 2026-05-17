@@ -692,11 +692,11 @@ void actMinotaurTimer(Entity* my)
 
 	MINOTAURTIMER_LIFE++;
 	if ( MINOTAURTIMER_LIFE == (getMinotaurTimeToArrive() - (TICKS_PER_SECOND * 30))
-		&& rng.rand() % 5 == 0 )
+		&& rng.rand() % 20 == 0 )
 	{
 		int c;
 		bool spawnedsomebody = false;
-		for ( c = 0; c < 9; c++ )
+		for ( c = 0; c < 6; c++ )
 		{
 			Uint32 zapLeaderUid = 0;
 			Entity* monster = summonMonster(HUMAN, my->x, my->y);

@@ -67,7 +67,7 @@ void initHuman(Entity* my, Stat* myStats)
 			// generate special loadout
 			if ( my->monsterSpecialTimer == 0 )
 			{
-				if ( ((*cvar_summonBosses && conductGameChallenges[CONDUCT_CHEATS_ENABLED]) || rng.rand() % 25 == 0) && !myStats->MISC_FLAGS[STAT_FLAG_DISABLE_MINIBOSS]
+				if ( ((*cvar_summonBosses && conductGameChallenges[CONDUCT_CHEATS_ENABLED]) || rng.rand() % (BOSS_MONSTER_SPAWN_CHANCE / 2) == 0) && !myStats->MISC_FLAGS[STAT_FLAG_DISABLE_MINIBOSS]
 					&& strcmp(myStats->name, "scriptNPC") && myStats->MISC_FLAGS[STAT_FLAG_NPC] == 0
 					&& myStats->leader_uid == 0 )
 				{
@@ -356,13 +356,15 @@ void initHuman(Entity* my, Stat* myStats)
 				myStats->INT = 3;
 				myStats->PER = 10;
 				myStats->CHR = 10;
-				myStats->helmet = newItem(HAT_HOOD, EXCELLENT, 2, 1, 3, false, nullptr);
+				myStats->helmet = newItem(HAT_HOOD, EXCELLENT, 1, 1, 3, false, nullptr);
 				myStats->gloves = newItem(GLOVES, EXCELLENT, 0, 1, 2, false, nullptr);
-				myStats->shoes = newItem(LEATHER_BOOTS_SPEED, EXCELLENT, 0, 1, 2, false, nullptr);
+				myStats->shoes = newItem(LEATHER_BOOTS, EXCELLENT, 0, 1, 2, false, nullptr);
 				myStats->breastplate = newItem(LEATHER_BREASTPIECE, EXCELLENT, 0, 1, 2, false, nullptr);
-				myStats->cloak = newItem(CLOAK_PROTECTION, EXCELLENT, 2, 1, 3, false, nullptr);
-				myStats->weapon = newItem(MAGICSTAFF_LIGHTNING, EXCELLENT, 1, 1, 2, false, nullptr);
-				myStats->amulet = newItem(AMULET_MAGICREFLECTION, EXCELLENT, 1, 1, 2, false, nullptr);
+				ItemType cloak = rng.rand() % 3 ? CLOAK : CLOAK_PROTECTION;
+				myStats->cloak = newItem(cloak, EXCELLENT, 0, 1, 3, false, nullptr);
+				myStats->weapon = newItem(MAGICSTAFF_LIGHTNING, SERVICABLE, 1, 1, 2, false, nullptr);
+				myStats->amulet = newItem(AMULET_MAGICREFLECTION, SERVICABLE, 0, 1, 2, false, nullptr);
+
 			}
 
 			// random effects

@@ -69,7 +69,7 @@ void initShadow(Entity* my, Stat* myStats)
 			int customItemsToGenerate = ITEM_CUSTOM_SLOT_LIMIT;
 
 			const bool boss =
-			    rng.rand() % 50 == 0 &&
+			    rng.rand() % BOSS_MONSTER_SPAWN_CHANCE == 0 &&
 			    !my->flags[USERFLAG2] &&
 			    !myStats->MISC_FLAGS[STAT_FLAG_DISABLE_MINIBOSS];
 

@@ -89,10 +89,10 @@ void initGhoul(Entity* my, Stat* myStats)
 			// generate 6 items max, less if there are any forced items from boss variants
 			int customItemsToGenerate = ITEM_CUSTOM_SLOT_LIMIT;
 
-			int bosschance = 50;
+			int bosschance = BOSS_MONSTER_SPAWN_CHANCE;
 			if ( !strncmp(map.name, "The Haunted Castle", 18) )
 			{
-				bosschance = 100;
+				bosschance = BOSS_MONSTER_SPAWN_CHANCE * 2;
 			}
 
 			// boss variants

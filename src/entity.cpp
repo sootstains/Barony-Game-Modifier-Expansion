@@ -8190,43 +8190,43 @@ real_t Entity::getACEffectiveness(Entity* my, Stat* myStats, bool isPlayer, Enti
 				switch (myStats->shield->type)
 				{
 					case TOOL_TORCH:
-					ACEffectiveness = 0.7;
+					ACEffectiveness += 0.2;
 					break;
 
 					case WOODEN_SHIELD:
-					ACEffectiveness = 0.75;
+					ACEffectiveness += 0.25;
 					break;
 
 					case BRONZE_SHIELD:
-					ACEffectiveness = 0.8;
+					ACEffectiveness += 0.3;
 					break;
 
 					case IRON_SHIELD:
-					ACEffectiveness = 0.825;
+					ACEffectiveness += 0.325;
 					break;
 
 					case STEEL_SHIELD:
-					ACEffectiveness = 0.85;
+					ACEffectiveness += 0.35;
 					break;
 
 					case STEEL_SHIELD_RESISTANCE:
-					ACEffectiveness = 0.85;
+					ACEffectiveness += 0.35;
 					break;
 
 					case CRYSTAL_SHIELD:
-					ACEffectiveness = 0.9;
+					ACEffectiveness += 0.4;
 					break;
 
 					case MIRROR_SHIELD:
-					ACEffectiveness = 1.0;
+					ACEffectiveness += 1.0;
 					break;
 
 					case TOOL_FRYING_PAN:
-					ACEffectiveness = 0.8;
+					ACEffectiveness += 0.3;
 					break;
 
 					default:
-					ACEffectiveness = Item::doesItemProvideBeatitudeAC(myStats->shield->type) ? 0.65 : 0.5;
+					ACEffectiveness += Item::doesItemProvideBeatitudeAC(myStats->shield->type) ? 0.15 : 0;
 					break;
 				}
 			}
@@ -9159,6 +9159,12 @@ Sint32 statGetDEX(Stat* entitystats, Entity* my)
 			DEX += 3;
 		}
 	}
+
+	if ( entitystats->type == MINOTAUR )
+	{
+		DEX = std::max(DEX, 15);
+	}
+
 	return DEX;
 }
 
@@ -17085,6 +17091,10 @@ int AC(Stat* stat)
 		}
 	}
 	int armor = statGetCON(stat, playerEntity);
+	if (player)
+	{
+		armor = armor - (statGetCON(stat, playerEntity) / 4); // reduce player's AC from CON by 25% 
+	}
 	if ( stat->getEffectActive(EFF_FOCI_LIGHT_SANCTUARY) )
 	{
 		armor += getSpellDamageFromID(SPELL_FOCI_LIGHT_SANCTUARY, nullptr, nullptr, nullptr);

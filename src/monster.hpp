@@ -79,6 +79,8 @@ enum Monster : int
 const int NUMMONSTERS = MAX_MONSTER;
 extern int kills[NUMMONSTERS];
 
+static const int BOSS_MONSTER_SPAWN_CHANCE = 100;
+
 static std::vector<Sint32> monsterSprites[NUMMONSTERS] = {
     // NOTHING
     {

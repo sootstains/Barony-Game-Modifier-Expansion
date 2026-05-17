@@ -5611,6 +5611,56 @@ static std::unordered_map<Uint32, void(*)()> clientPacketHandlers = {
 		}
 	}},
 
+	// repair my equipment
+	{'REP8', [](){
+		
+		Item* equipment = nullptr;
+
+		if ( stats[clientnum]->helmet && stats[clientnum]->helmet->status < EXCELLENT )
+		{
+			equipment = stats[clientnum]->helmet;
+			equipment->status = static_cast<Status>(equipment->status + 1);
+		}
+		if ( stats[clientnum]->breastplate && stats[clientnum]->breastplate->status < EXCELLENT )
+		{
+			equipment = stats[clientnum]->breastplate;
+			equipment->status = static_cast<Status>(equipment->status + 1);
+		}
+		if ( stats[clientnum]->gloves && stats[clientnum]->gloves->status < EXCELLENT )
+		{
+			equipment = stats[clientnum]->gloves;
+			equipment->status = static_cast<Status>(equipment->status + 1);
+		}
+		if ( stats[clientnum]->shoes && stats[clientnum]->shoes->status < EXCELLENT )
+		{
+			equipment = stats[clientnum]->shoes;
+			equipment->status = static_cast<Status>(equipment->status + 1);
+		}
+		if ( stats[clientnum]->shield && stats[clientnum]->shield->status < EXCELLENT )
+		{
+			equipment = stats[clientnum]->shield;
+			if ( equipment->type != TOOL_TORCH )
+			{
+				equipment->status = static_cast<Status>(equipment->status + 1);
+			}
+		}
+		if ( stats[clientnum]->weapon && stats[clientnum]->weapon->status < EXCELLENT )
+		{
+			equipment = stats[clientnum]->weapon;
+			equipment->status = static_cast<Status>(equipment->status + 1);
+		}
+		if ( stats[clientnum]->cloak && stats[clientnum]->cloak->status < EXCELLENT )
+		{
+			equipment = stats[clientnum]->cloak;
+			equipment->status = static_cast<Status>(equipment->status + 1);
+		}
+		if ( stats[clientnum]->mask && stats[clientnum]->mask->status < EXCELLENT )
+		{
+			equipment = stats[clientnum]->mask;
+			equipment->status = static_cast<Status>(equipment->status + 1);
+		}
+	}},
+
 	// bless one piece of my equipment
 	{'BLE1', [](){
 		Uint32 chosen = static_cast<Uint32>(SDLNet_Read32(&net_packet->data[4]));
