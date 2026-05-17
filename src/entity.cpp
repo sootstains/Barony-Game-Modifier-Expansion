@@ -8507,6 +8507,12 @@ Sint32 Entity::getThrownAttack()
 	{
 		real_t statToAtkRatio = Entity::PlayerAttackThrownStatFactor;
 
+		bool hatchet = false;
+		if ( entitystats->weapon->type == STEEL_HATCHET )
+		{
+			hatchet = true;
+		}
+
 		if ( entitystats->weapon->type == BOLAS )
 		{
 			attack = entitystats->weapon->weaponGetAttack(entitystats);
@@ -8517,7 +8523,7 @@ Sint32 Entity::getThrownAttack()
 		{
 			attack = entitystats->weapon->weaponGetAttack(entitystats);
 		}
-		else if ( itemCategory(entitystats->weapon) == THROWN  )
+		else if ( itemCategory(entitystats->weapon) == THROWN  || hatchet )
 		{
 			attack += entitystats->weapon->weaponGetAttack(entitystats);
 			if ( behavior == &actPlayer )
@@ -8528,6 +8534,10 @@ Sint32 Entity::getThrownAttack()
 			{
 				int dex = getDEX() / 4;
 				attack += dex;
+			}
+			if ( hatchet )
+			{
+				attack *= 2;
 			}
 			attack *= thrownDamageSkillMultipliers[std::min(skillLVL, 5)];
 		}
@@ -11082,6 +11092,12 @@ void Entity::attack(int pose, int charge, Entity* target)
 				}
 				return;
 			}
+			
+			bool hatchet = false;
+			if ( myStats->weapon && myStats->weapon->type == STEEL_HATCHET && !shapeshifted )
+			{
+				hatchet = true;
+			}
 
 			// potions & gems (throwing), and thrown weapons
 			if ( itemCategory(myStats->weapon) == POTION 
@@ -11089,7 +11105,8 @@ void Entity::attack(int pose, int charge, Entity* target)
 				|| itemCategory(myStats->weapon) == THROWN
 				|| myStats->weapon->type == FOOD_CREAMPIE
 				|| itemIsThrowableTinkerTool(myStats->weapon)
-				|| myStats->weapon->type == TOOL_DUCK )
+				|| myStats->weapon->type == TOOL_DUCK 
+				|| (hatchet && charge >= Stat::getMaxAttackCharge(myStats) / 2) )
 			{
 				bool drankPotion = false;
 				if ( behavior == &actMonster && myStats->type == GOATMAN && itemCategory(myStats->weapon) == POTION )
@@ -11169,7 +11186,7 @@ void Entity::attack(int pose, int charge, Entity* target)
 					entity->skill[15] = myStats->weapon->identified;
 				}
 
-				if ( itemCategory(myStats->weapon) == THROWN )
+				if ( itemCategory(myStats->weapon) == THROWN || hatchet )
 				{
 					real_t speed = 5.f;
 					real_t normalisedCharge = (charge * 1.5 / Stat::getMaxAttackCharge(myStats)); // 0-1.5
@@ -11181,7 +11198,6 @@ void Entity::attack(int pose, int charge, Entity* target)
 					{
 						speed = 5.f + normalisedCharge;
 					}
-
 
 					if ( myStats->weapon->type == GREASE_BALL
 						|| myStats->weapon->type == DUST_BALL
@@ -11368,6 +11384,7 @@ void Entity::attack(int pose, int charge, Entity* target)
 		bool flail = myStats->weapon && myStats->weapon->type == STEEL_FLAIL && !shapeshifted;
 		bool miss = false;
 		bool guard = false;
+		bool hatchet = myStats->weapon && myStats->weapon->type == STEEL_HATCHET && !shapeshifted;
 		int strikeRange = STRIKERANGE;
 		// normal attacks
 		if ( target == nullptr )
@@ -16158,7 +16175,7 @@ void Entity::attack(int pose, int charge, Entity* target)
 								|| (local_rng.rand() % 4 == 0 && pose == PLAYER_POSE_GOLEM_SMASH)
 								|| (thornsEffect < 0 && behavior == &actPlayer)
 								|| (local_rng.rand() % 10 == 0 && myStats->type == VAMPIRE && myStats->weapon == nullptr)
-								|| (local_rng.rand() % 8 == 0 && myStats->getEffectActive(EFF_VAMPIRICAURA) && (myStats->weapon == nullptr || myStats->type == LICH_FIRE))
+								|| (local_rng.rand() % 8 == 0 && myStats->getEffectActive(EFF_VAMPIRICAURA) && (myStats->weapon == nullptr || myStats->type == LICH_FIRE)) 
 							)
 							{
 								bool heavyBleedEffect = false; // heavy bleed will have a greater starting duration, and add to existing duration.
@@ -21020,7 +21037,8 @@ int getWeaponSkill(const Item* weapon)
 		|| weapon->type == STEEL_GREATAXE
 		|| weapon->type == BLACKIRON_AXE 
 		|| weapon->type == SILVER_AXE
-		|| weapon->type == BONE_AXE )
+		|| weapon->type == BONE_AXE 
+		|| weapon->type == STEEL_HATCHET) 
 	{
 		return PRO_AXE;
 	}

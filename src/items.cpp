@@ -4910,6 +4910,10 @@ Sint32 Item::weaponGetAttack(const Stat* const wielder) const
 	{
 		return attack + 4;
 	}
+	else if ( type == STEEL_HATCHET )
+	{
+		attack += 5;
+	}
 	// old formula
 	//attack *= (double)(status / 5.0);
 	//

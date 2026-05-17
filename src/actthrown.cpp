@@ -1359,6 +1359,13 @@ void actThrown(Entity* my)
 								hit.entity->defyFleshProc(parent);
 							}
 							hit.entity->pinpointDamageProc(parent, damageTaken);
+
+							if ( my->skill[10] == STEEL_HATCHET) // hunter's hatchet
+							{
+
+								hitstats->setEffectActive(EFF_HUNTED, 1);
+								hitstats->EFFECTS_TIMERS[EFF_HUNTED] += 500;
+							}
 						}
 					}
 

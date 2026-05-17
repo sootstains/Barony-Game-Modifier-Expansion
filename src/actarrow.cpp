@@ -967,6 +967,16 @@ void actArrow(Entity* my)
 					{
 						thaumSpellArmorProc(hit.entity, *hitstats, false, parent, EFF_DIVINE_GUARD);
 					}
+					
+					if ( hitstats && hitstats->getEffectActive(EFF_HUNTED) )
+					{
+						hitstats->EFFECTS_TIMERS[EFF_HUNTED] = 1; // clear hunted effect 
+
+						double markBonusDamage = (hitstats->HP * 0.15);
+
+						damage += markBonusDamage;
+						
+					}
 
 					/*messagePlayer(0, "My damage: %d, AC: %d, Pierce: %d", my->arrowPower, AC(hitstats), my->arrowArmorPierce);
 					messagePlayer(0, "Resolved to %d damage.", damage);*/
