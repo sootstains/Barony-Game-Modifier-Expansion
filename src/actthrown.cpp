@@ -1362,9 +1362,10 @@ void actThrown(Entity* my)
 
 							if ( my->skill[10] == STEEL_HATCHET) // hunter's hatchet
 							{
-
-								hitstats->setEffectActive(EFF_HUNTED, 1);
-								hitstats->EFFECTS_TIMERS[EFF_HUNTED] += 500;
+								int cleft = hitstats->getEffectActive(EFF_HUNTED);
+								hitstats->setEffectActive(EFF_HUNTED, cleft + 1);
+								hitstats->EFFECTS_TIMERS[EFF_HUNTED] = std::max( hitstats->EFFECTS_TIMERS[EFF_HUNTED], 
+								std::min(hitstats->EFFECTS_TIMERS[EFF_HUNTED] + 500, 750) ); // can only add time up to 15 seconds 
 							}
 						}
 					}

@@ -11106,7 +11106,7 @@ void Entity::attack(int pose, int charge, Entity* target)
 				|| myStats->weapon->type == FOOD_CREAMPIE
 				|| itemIsThrowableTinkerTool(myStats->weapon)
 				|| myStats->weapon->type == TOOL_DUCK 
-				|| (hatchet && charge >= Stat::getMaxAttackCharge(myStats) / 2) )
+				|| (hatchet && charge < Stat::getMaxAttackCharge(myStats) / 2) )
 			{
 				bool drankPotion = false;
 				if ( behavior == &actMonster && myStats->type == GOATMAN && itemCategory(myStats->weapon) == POTION )
@@ -11386,6 +11386,12 @@ void Entity::attack(int pose, int charge, Entity* target)
 		bool guard = false;
 		bool hatchet = myStats->weapon && myStats->weapon->type == STEEL_HATCHET && !shapeshifted;
 		int strikeRange = STRIKERANGE;
+
+		if (hatchet)
+		{
+			strikeRange = STRIKERANGE - 4; // hatchet range is reduced
+		}
+
 		// normal attacks
 		if ( target == nullptr )
 		{
@@ -13249,6 +13255,24 @@ void Entity::attack(int pose, int charge, Entity* target)
 						damage = 0;
 						spawnBang(hit.entity->x, hit.entity->y, hit.entity->z);
 					}
+
+					if (hatchet && hitstats)
+					{
+						int cleft = hitstats->getEffectActive(EFF_HUNTED);
+						hitstats->setEffectActive(EFF_HUNTED, cleft + 1);
+						hitstats->EFFECTS_TIMERS[EFF_HUNTED] = std::max( hitstats->EFFECTS_TIMERS[EFF_HUNTED], 
+						std::min(hitstats->EFFECTS_TIMERS[EFF_HUNTED] + 250, 500) ); // can only add time up to 10 seconds 
+					}
+
+					if ( hitstats && hitstats->getEffectActive(EFF_HUNTED) && charge >= Stat::getMaxAttackCharge(myStats) / 2 ) // charged attacks benefit from cleft
+					{
+						int cleft = hitstats->getEffectActive(EFF_HUNTED);
+						cleft = std::min(cleft, 3); // max 3 stacks for this
+
+						double bonusDamage = (hitstats->MAXHP - hitstats->HP) * (0.05 * cleft); // 5-15% missing HP
+						damage += bonusDamage;
+					}
+
 
 					Sint32 oldHP = hitstats->HP;
 					hit.entity->modHP(-damage); // do the damage

@@ -2800,6 +2800,7 @@ void useItem(Item* item, const int player, Entity* usedBy, bool unequipForDroppi
 		case SILVER_MACE:
 		case SILVER_PLUMBATA:
 		case SILVER_SWORD:
+		case STEEL_HATCHET:
 			equipItemResult = equipItem(item, &stats[player]->weapon, player, checkInventorySpaceForPaperDoll);
 			break;
 		case STEEL_SHIELD:

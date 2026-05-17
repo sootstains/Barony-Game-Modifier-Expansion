@@ -972,9 +972,11 @@ void actArrow(Entity* my)
 					{
 						hitstats->EFFECTS_TIMERS[EFF_HUNTED] = 1; // clear hunted effect 
 
-						double markBonusDamage = (hitstats->HP * 0.15);
+						double markDamage = (hitstats->HP * 0.15); // 15% current hp
+						double markFactor = hitstats->getEffectActive(EFF_HUNTED) * 0.05; // 5% current hp per stack
+						double markBonusDamage = (hitstats->HP * markFactor); // 20% current hp with 1 stack
 
-						damage += markBonusDamage;
+						damage += markDamage + markBonusDamage;
 						
 					}
 
