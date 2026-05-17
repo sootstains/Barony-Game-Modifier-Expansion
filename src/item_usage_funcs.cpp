@@ -2394,12 +2394,17 @@ bool item_PotionHealing(Item*& item, Entity* entity, Entity* usedBy, bool should
 	{
 		amount /= (std::abs(item->beatitude) * 2);
 	}
+	else
+	{
+		stats->setEffectActive(EFF_REJUVENATION, 1); // healing over time
+		stats->EFFECTS_TIMERS[EFF_REJUVENATION] += amount * (TICKS_PER_SECOND / 10); // 10 hp per second
+	}
 
 	int oldHP = entity->getHP();
 
-	entity->modHP(amount);
+	// entity->modHP(amount);
 
-	int heal = std::max(entity->getHP() - oldHP, 0);
+	int heal = std::max( (entity->getHP() + amount) - oldHP, 0);
 	if ( heal > 0 )
 	{
 		entity->getHealingSpellPotionModifierFromEffects(true);
@@ -2549,12 +2554,19 @@ bool item_PotionExtraHealing(Item*& item, Entity* entity, Entity* usedBy, bool s
 	{
 		amount /= (std::abs(item->beatitude) * 2);
 	}
+	else
+	{
+		stats->setEffectActive(EFF_REJUVENATION, 1); // healing over time
+		stats->EFFECTS_TIMERS[EFF_REJUVENATION] += amount * (TICKS_PER_SECOND / 10); // 10 hp per second
+	}
 
 	int oldHP = entity->getHP();
 
-	entity->modHP(amount);
+	// entity->modHP(amount);
 
-	int heal = std::max(entity->getHP() - oldHP, 0);
+	
+
+	int heal = std::max( (entity->getHP() + amount) - oldHP, 0);
 	if ( heal > 0 )
 	{
 		entity->getHealingSpellPotionModifierFromEffects(true);

@@ -157,6 +157,7 @@ static const int EFF_SIGIL = 132;
 static const int EFF_SANCTUARY = 133;
 static const int EFF_DUCKED = 134;
 static const int EFF_HUNTED = 135;
+static const int EFF_REJUVENATION = 136;
 static const int NUMEFFECTS = 160;
 
 // stats

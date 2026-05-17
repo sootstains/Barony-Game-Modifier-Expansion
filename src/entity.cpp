@@ -5361,6 +5361,16 @@ void Entity::handleEffects(Stat* myStats)
 		}
 	}
 
+	if ( myStats->getEffectActive(EFF_REJUVENATION) && myStats->EFFECTS_TIMERS[EFF_REJUVENATION] > 0 && myStats->HP > 0 ) // healing over time
+	{
+		int interval = TICKS_PER_SECOND / 10; // 10 hp per second
+		
+		if ( (myStats->EFFECTS_TIMERS[EFF_REJUVENATION] + 1) % interval == 0 )
+			{
+				this->modHP(1);
+			}
+	}
+
 	if ( myStats->getEffectActive(EFF_HP_MP_REGEN) && (svFlags & SV_FLAG_HUNGER)
 		&& myStats->EFFECTS_TIMERS[EFF_HP_MP_REGEN] > 0 && myStats->HP > 0 )
 	{

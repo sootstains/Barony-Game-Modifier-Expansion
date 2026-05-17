@@ -410,8 +410,161 @@ void actFountain(Entity* my)
 						}
 						case 3:
 						{
-							// bless all equipment
+							// repair random equipments
+
+							int repairs = 2 + rng.rand() % 3; // 2-4 items 
+							bool doneRepair = false;
+							bool sendMessage = false;
+
 							playSoundEntity(players[i]->entity, 52, 64);
+							Uint32 textcolor = makeColorRGB(0, 255, 255);
+							messagePlayerColor(i, MESSAGE_STATUS, textcolor, Language::get(471));
+
+							if ( !stats[i] )
+							{
+								break;
+							}
+
+							for ( int loops = 0; loops < repairs; loops++ )
+							{
+								int armornum = rng.rand() % 8;
+								Status itemstatus = SERVICABLE;
+								
+								switch (armornum)
+								{
+									case 0:
+										if (stats[i]->weapon && stats[i]->weapon->status < EXCELLENT)
+										{
+											if ( !(stats[i]->weapon->type >= ARTIFACT_SWORD && stats[i]->weapon->type <= ARTIFACT_GLOVES) || rng.rand() % 3 == 0 )
+											{
+												stats[i]->weapon->status = static_cast<Status>(stats[i]->weapon->status + 1);
+												doneRepair = true;
+												armornum = 0;
+												itemstatus = stats[i]->weapon->status;
+												sendMessage = true;
+												break;
+											}
+										}
+									case 1:
+										if (stats[i]->helmet && stats[i]->helmet->status < EXCELLENT)
+										{
+											if ( !(stats[i]->helmet->type >= ARTIFACT_SWORD && stats[i]->helmet->type <= ARTIFACT_GLOVES) || rng.rand() % 3 == 0 )
+											{
+												stats[i]->helmet->status = static_cast<Status>(stats[i]->helmet->status + 1);
+												doneRepair = true;
+												armornum = 1;
+												itemstatus = stats[i]->helmet->status;
+												sendMessage = true;
+												break;
+											}
+										}
+									case 2:
+										if (stats[i]->breastplate && stats[i]->breastplate->status < EXCELLENT)
+										{
+											if ( !(stats[i]->breastplate->type >= ARTIFACT_SWORD && stats[i]->breastplate->type <= ARTIFACT_GLOVES) || rng.rand() % 3 == 0 )
+											{
+												stats[i]->breastplate->status = static_cast<Status>(stats[i]->breastplate->status + 1);
+												doneRepair = true;
+												armornum = 2;
+												itemstatus = stats[i]->breastplate->status;
+												sendMessage = true;
+												break;
+											}
+										}
+									case 3:
+										if (stats[i]->gloves && stats[i]->gloves->status < EXCELLENT)
+										{
+											if ( !(stats[i]->gloves->type >= ARTIFACT_SWORD && stats[i]->gloves->type <= ARTIFACT_GLOVES) || rng.rand() % 3 == 0 )
+											{
+												stats[i]->gloves->status = static_cast<Status>(stats[i]->gloves->status + 1);
+												doneRepair = true;
+												armornum = 3;
+												itemstatus = stats[i]->gloves->status;
+												sendMessage = true;
+												break;
+											}
+										}
+									case 4:
+										if (stats[i]->shoes && stats[i]->shoes->status < EXCELLENT)
+										{
+											if ( !(stats[i]->shoes->type >= ARTIFACT_SWORD && stats[i]->shoes->type <= ARTIFACT_GLOVES) || rng.rand() % 3 == 0 )
+											{
+												stats[i]->shoes->status = static_cast<Status>(stats[i]->shoes->status + 1);
+												doneRepair = true;
+												armornum = 4;
+												itemstatus = stats[i]->shoes->status;
+												sendMessage = true;
+												break;
+											}
+										}
+									case 5:
+										if (stats[i]->shield && stats[i]->shield->status < EXCELLENT)
+										{
+											if ( !(stats[i]->shield->type >= ARTIFACT_SWORD && stats[i]->shield->type <= ARTIFACT_GLOVES) || rng.rand() % 3 == 0 )
+											{
+												stats[i]->shield->status = static_cast<Status>(stats[i]->shield->status + 1);
+												doneRepair = true;
+												armornum = 5;
+												itemstatus = stats[i]->shield->status;
+												sendMessage = true;
+												break;
+											}
+										}
+									case 6:
+										if (stats[i]->cloak && stats[i]->cloak->status < EXCELLENT)
+										{
+											if ( !(stats[i]->cloak->type >= ARTIFACT_SWORD && stats[i]->cloak->type <= ARTIFACT_GLOVES) || rng.rand() % 3 == 0 )
+											{
+												stats[i]->cloak->status = static_cast<Status>(stats[i]->cloak->status + 1);
+												doneRepair = true;
+												armornum = 6;
+												itemstatus = stats[i]->cloak->status;
+												sendMessage = true;
+												break;
+											}
+										}
+									case 7:
+										if (stats[i]->mask && stats[i]->mask->status < EXCELLENT)
+										{
+											if ( !(stats[i]->mask->type == MASK_ARTIFACT_VISOR) || rng.rand() % 3 == 0 )
+											{
+												stats[i]->mask->status = static_cast<Status>(stats[i]->mask->status + 1);
+												doneRepair = true;
+												armornum = 7;
+												itemstatus = stats[i]->mask->status;
+												sendMessage = true;
+												break;
+											}
+										}
+
+									default:
+									doneRepair = false;
+									break;
+								}
+
+								if ( doneRepair && multiplayer == SERVER && i > 0 && !players[i]->isLocalPlayer() )
+								{
+									strcpy((char*)net_packet->data, "REPA");
+									net_packet->data[4] = i;
+									net_packet->data[5] = armornum;
+									net_packet->data[6] = itemstatus;
+									net_packet->address.host = net_clients[i - 1].host;
+									net_packet->address.port = net_clients[i - 1].port;
+									net_packet->len = 7;
+									sendPacketSafe(net_sock, -1, net_packet, i - 1);
+								}
+
+							}
+
+							if ( sendMessage )
+							{
+								messagePlayerColor(i, MESSAGE_STATUS, textcolor, "The fountain restores your equipment.");
+							}
+
+
+
+							// bless all equipment
+							/*playSoundEntity(players[i]->entity, 52, 64);
 							//playSoundEntity(players[i]->entity, 167, 64);
 							Uint32 textcolor = makeColorRGB(0, 255, 255);
 							messagePlayerColor(i, MESSAGE_STATUS, textcolor, Language::get(471));
@@ -528,7 +681,7 @@ void actFountain(Entity* my)
 							if ( stuckOnYouSuccess )
 							{
 								steamAchievementClient(i, "BARONY_ACH_STUCK_ON_YOU");
-							}
+							}*/
 							break;
 						}
 						case 4:
