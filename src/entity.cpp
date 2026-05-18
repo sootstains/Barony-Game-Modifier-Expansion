@@ -17091,10 +17091,6 @@ int AC(Stat* stat)
 		}
 	}
 	int armor = statGetCON(stat, playerEntity);
-	if (player)
-	{
-		armor = armor - (statGetCON(stat, playerEntity) / 4); // reduce player's AC from CON by 25% 
-	}
 	if ( stat->getEffectActive(EFF_FOCI_LIGHT_SANCTUARY) )
 	{
 		armor += getSpellDamageFromID(SPELL_FOCI_LIGHT_SANCTUARY, nullptr, nullptr, nullptr);
