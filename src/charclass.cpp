@@ -1095,7 +1095,7 @@ void initClass(const int player)
 		}
 
 		// leather breastpiece
-		item = newItem(LEATHER_BREASTPIECE, WORN, 0, 1, 0, true, nullptr);
+		item = newItem(LEATHER_BOOTS, WORN, 0, 1, 0, true, nullptr); // i like boots more
 		if ( isLocalPlayer )
 		{
 			item2 = itemPickup(player, item);
