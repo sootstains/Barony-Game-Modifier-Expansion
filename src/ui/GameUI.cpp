@@ -8326,7 +8326,8 @@ const int StatusEffectQueue_t::kEffectStability = -27;
 const int StatusEffectQueue_t::kEffectVandal = -28;
 const int StatusEffectQueue_t::kEffectOvercharge = -29;
 const int StatusEffectQueue_t::kEffectWealth = -30;
-const int StatusEffectQueue_t::kEffectEnd = -31;
+const int StatusEffectQueue_t::kEffectKinesis = -31;
+const int StatusEffectQueue_t::kEffectEnd = -32;
 const int StatusEffectQueue_t::kSpellEffectOffset = 10000;
 
 Frame* StatusEffectQueue_t::getStatusEffectFrame()
@@ -8988,7 +8989,11 @@ void StatusEffectQueue_t::updateAllQueuedEffects()
 			{
 				miscEffects[kEffectConflict] = true;
 			}
-			if ( (stats[player]->ring && stats[player]->ring->type == RING_STRENGTH)
+			if ( stats[player]->ring && stats[player]->ring->type == RING_KINESIS)
+			{
+				miscEffects[kEffectKinesis] = true; // i am the master of tooltip!
+			}
+			if ( (stats[player]->ring && (stats[player]->ring->type == RING_STRENGTH || stats[player]->ring->type == RING_KINESIS) )
 				|| (stats[player]->gloves && stats[player]->gloves->type == GAUNTLETS_STRENGTH)
 				|| stats[player]->getEffectActive(EFF_GREATER_MIGHT)
 				|| stats[player]->getEffectActive(EFF_POTION_STR) )

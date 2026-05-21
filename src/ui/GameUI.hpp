@@ -186,6 +186,7 @@ struct StatusEffectQueue_t
 	static const int kEffectOvercharge;
 	static const int kEffectWealth;
 	static const int kEffectEnd;
+	static const int kEffectKinesis;
 	
 	Frame* statusEffectFrame = nullptr;
 	Frame* statusEffectTooltipFrame = nullptr;

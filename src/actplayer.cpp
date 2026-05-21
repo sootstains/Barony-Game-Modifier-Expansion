@@ -4388,6 +4388,11 @@ real_t Player::PlayerMovement_t::getSpeedFactor(real_t weightratio, Sint32 DEX)
 	{
 		maxSpeed += 1.0;
 	}
+	
+	if ( stats[player.playernum]->ring && stats[player.playernum]->ring->type == RING_KINESIS )
+	{
+		maxSpeed += 1.0; // increase speed cap with ring
+	}
 
 	real_t speedFactor = std::min((((DEX) * .4) + 8.5 - slowSpeedPenalty) * weightratio, maxSpeed);
 	/*if ( DEX <= 5 )
@@ -4542,11 +4547,47 @@ void Player::PlayerMovement_t::handlePlayerMovement(bool useRefreshRateDelta)
 		{
 			movementDrag = 0.95;
 		}
+
+		if ( (isLevitating(stats[PLAYER_NUM])) )
+		{
+			if ( stats[PLAYER_NUM]->getEffectActive(EFF_KNOCKBACK) || stats[PLAYER_NUM]->getEffectActive(EFF_DASH) )
+			{
+				movementDrag = 0.99; // out of control!
+			}
+			else
+			{
+				movementDrag = 0.95; // player isn't grounded!
+			}
+
+			if ( stats[PLAYER_NUM]->ring && stats[PLAYER_NUM]->ring->type == RING_KINESIS )
+			{
+				movementDrag = 0.8; // mastery of levitation!
+			}
+		}
+
+		if ( stats[PLAYER_NUM]->ring && stats[PLAYER_NUM]->ring->type == RING_KINESIS )
+		{
+			double boost = 0.2;
+			bool isBlessed = false;
+
+			if (stats[PLAYER_NUM]->ring->beatitude < 0)
+			{
+				boost = shouldInvertEquipmentBeatitude(stats[PLAYER_NUM]) ? 0.2 : -0.2;
+			}
+				
+			if ( stats[PLAYER_NUM]->getEffectActive(EFF_DASH) || stats[PLAYER_NUM]->getEffectActive(EFF_KNOCKBACK) )
+			{
+				movementDrag += boost; // +20% normal / -20% if cursed
+
+				movementDrag = std::min(movementDrag, 0.99); // don't disable drag!
+			}
+		}
 	}
 
 	bool cleats = false;
 	if ( stats[PLAYER_NUM]->shoes && stats[PLAYER_NUM]->shoes->type == CLEAT_BOOTS
-		&& players[PLAYER_NUM]->entity && players[PLAYER_NUM]->entity->effectShapeshift == NOTHING )
+		&& players[PLAYER_NUM]->entity && players[PLAYER_NUM]->entity->effectShapeshift == NOTHING 
+		&& (!isLevitating(stats[PLAYER_NUM])) ) // cleats don't work when you aren't on the floor!
 	{
 		cleats = true;
 		if ( movementDrag >= 0.85 )

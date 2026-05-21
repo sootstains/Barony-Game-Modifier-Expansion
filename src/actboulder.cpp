@@ -1202,17 +1202,34 @@ void actBoulder(Entity* my)
 	// pushing boulders
 	if ( BOULDER_STOPPED )
 	{
+
 		if ( !BOULDER_ROLLING )
 		{
 			BOULDER_PLAYERPUSHED = -1;
 			int playerTelekinesis = BOULDER_TELEKINESIS_PULL - 1;
 			int playerKineticPush = BOULDER_TELEKINESIS_PUSH - 1;
-
+			
 			for (i = 0; i < MAXPLAYERS; i++)
 			{
 				if ( selectedEntity[i] == my || client_selected[i] == my || playerTelekinesis == i || playerKineticPush == i )
 				{
-					if (inrange[i] || playerTelekinesis == i || playerKineticPush == i )
+							bool hasKineticRing = false;
+							int kineticBless = 0;
+							bool reverseDirection = false;
+
+						if ( stats[i]->ring && stats[i]->ring->type == ItemType::RING_KINESIS )
+							{
+								hasKineticRing = true; // i have the power!
+								kineticBless = shouldInvertEquipmentBeatitude(stats[i]) ? abs(stats[i]->ring->beatitude) : stats[i]->ring->beatitude;
+								// increase force with blessings
+								if ( kineticBless < 0 )
+								{
+									reverseDirection = true;
+								}
+							}
+
+
+					if (inrange[i] || playerTelekinesis == i || playerKineticPush == i)
 					{
                         bool hasRingOfStr = false;
 						if ( players[i] && players[i]->entity ) 
@@ -1233,6 +1250,10 @@ void actBoulder(Entity* my)
 							}
 							else if ( stats[i]->getEffectActive(EFF_POTION_STR)
 								|| stats[i]->getEffectActive(EFF_GREATER_MIGHT) )
+							{
+								hasRingOfStr = true;
+							}
+							else if ( hasKineticRing )
 							{
 								hasRingOfStr = true;
 							}
@@ -1280,22 +1301,22 @@ void actBoulder(Entity* my)
 
 								if ( (tangent >= PI - PI / 4) && tangent < (PI + PI / 4) )
 								{
-									BOULDER_ROLLDIR = 0; // east
+									BOULDER_ROLLDIR = reverseDirection ? 2 : 0; // east 0, west 2
 									//messagePlayer(0, MESSAGE_DEBUG, "GO EAST %.2f", angle);
 								}
 								else if ( (tangent >= (3 * PI / 2) - PI / 4) && tangent < ((3 * PI / 2) + PI / 4) )
 								{
-									BOULDER_ROLLDIR = 1; // south
+									BOULDER_ROLLDIR = reverseDirection ? 3 : 1; // south 1, north 3
 									//messagePlayer(0, MESSAGE_DEBUG, "GO SOUTH %.2f", angle);
 								}
 								else if ( (tangent >= (3 * PI / 2) + PI / 4) || tangent < (PI / 4) )
 								{
-									BOULDER_ROLLDIR = 2; // west
+									BOULDER_ROLLDIR = reverseDirection ? 0 : 2; // west 2, east 0
 									//messagePlayer(0, MESSAGE_DEBUG, "GO WEST %.2f", angle);
 								}
 								else if ( (tangent >= PI / 4) && tangent < (PI - PI / 4) )
 								{
-									BOULDER_ROLLDIR = 3; // north
+									BOULDER_ROLLDIR = reverseDirection ? 1 : 3; // north 3, south 1
 									//messagePlayer(0, MESSAGE_DEBUG, "GO NORTH %.2f", angle);
 								}
 
@@ -1323,15 +1344,35 @@ void actBoulder(Entity* my)
 								{
 									case 0:
 										BOULDER_DESTX += 16;
+
+										if ( hasKineticRing )
+										{
+											BOULDER_DESTX += 16 * ( hasKineticRing + abs(kineticBless) ); // 1 tile plus 1 per blessing/curse
+										}
 										break;
 									case 1:
 										BOULDER_DESTY += 16;
+
+										if ( hasKineticRing )
+										{
+											BOULDER_DESTY += 16 * ( hasKineticRing + abs(kineticBless) );
+										}
 										break;
 									case 2:
 										BOULDER_DESTX -= 16;
+
+										if ( hasKineticRing )
+										{
+											BOULDER_DESTX -= 16 * ( hasKineticRing + abs(kineticBless) );
+										}
 										break;
 									case 3:
 										BOULDER_DESTY -= 16;
+
+										if ( hasKineticRing )
+										{
+											BOULDER_DESTY -= 16 * ( hasKineticRing + abs(kineticBless) );
+										}
 										break;
 								}
 								BOULDER_PLAYERPUSHED = i;
@@ -1370,6 +1411,7 @@ void actBoulder(Entity* my)
 					my->vel_y = -1;
 					break;
 			}
+
 			int x = (my->x + my->vel_x * 8) / 16;
 			int y = (my->y + my->vel_y * 8) / 16;
 			x = std::min<unsigned int>(std::max<int>(0, x), map.width - 1);

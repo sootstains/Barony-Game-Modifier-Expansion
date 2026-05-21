@@ -3186,6 +3186,7 @@ void useItem(Item* item, const int player, Entity* usedBy, bool unequipForDroppi
 		case RING_REGENERATION:
 		case RING_TELEPORTATION:
 		case RING_RESOLVE:
+		case RING_KINESIS:
 			equipItemResult = equipItem(item, &stats[player]->ring, player, checkInventorySpaceForPaperDoll);
 			break;
 		case SPELLBOOK_FORCEBOLT:

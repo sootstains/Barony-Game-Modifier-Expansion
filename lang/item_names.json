@@ -2100,6 +2100,10 @@
                 "steel_hatchet": {
             "name_identified": "hunter's hatchet",
             "name_unidentified": "hunter's hatchet"
+        },
+                "ring_kinesis": {
+            "name_identified": "ring of kinesis",
+            "name_unidentified": "ring"
         }
     },
 	"spell_names": {

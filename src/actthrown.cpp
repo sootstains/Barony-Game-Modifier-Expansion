@@ -370,7 +370,7 @@ void actThrown(Entity* my)
 	if ( my->z < groundHeight )
 	{
 		// fall
-		if ( cat == THROWN )
+		if ( cat == THROWN || type == STEEL_HATCHET )
 		{
 			// todo: adjust falling rates for thrown items if need be
 			if ( type == BOOMERANG )
@@ -410,7 +410,7 @@ void actThrown(Entity* my)
 			/*THROWN_VELX = 0.f;
 			THROWN_VELY = 0.f;
 			THROWN_VELZ = 0.f;*/
-			if ( type == BRONZE_TOMAHAWK || type == IRON_DAGGER || type == BONE_THROWING )
+			if ( type == BRONZE_TOMAHAWK || type == IRON_DAGGER || type == BONE_THROWING || type == STEEL_HATCHET ) // and hatchet!
 			{
 				// axe and dagger spin vertically
 				my->pitch += 0.2;
@@ -1360,13 +1360,13 @@ void actThrown(Entity* my)
 							}
 							hit.entity->pinpointDamageProc(parent, damageTaken);
 
-							if ( my->skill[10] == STEEL_HATCHET) // hunter's hatchet
+							/*if ( my->skill[10] == STEEL_HATCHET) // hunter's hatchet
 							{
 								int cleft = hitstats->getEffectActive(EFF_HUNTED);
 								hitstats->setEffectActive(EFF_HUNTED, cleft + 1);
 								hitstats->EFFECTS_TIMERS[EFF_HUNTED] = std::max( hitstats->EFFECTS_TIMERS[EFF_HUNTED], 
 								std::min(hitstats->EFFECTS_TIMERS[EFF_HUNTED] + 500, 750) ); // can only add time up to 15 seconds 
-							}
+							}*/
 						}
 					}
 

@@ -11403,11 +11403,6 @@ void Entity::attack(int pose, int charge, Entity* target)
 		bool hatchet = myStats->weapon && myStats->weapon->type == STEEL_HATCHET && !shapeshifted;
 		int strikeRange = STRIKERANGE;
 
-		if (hatchet)
-		{
-			strikeRange = STRIKERANGE - 4; // hatchet range is reduced
-		}
-
 		// normal attacks
 		if ( target == nullptr )
 		{
@@ -13272,7 +13267,7 @@ void Entity::attack(int pose, int charge, Entity* target)
 						spawnBang(hit.entity->x, hit.entity->y, hit.entity->z);
 					}
 
-					if (hatchet && hitstats)
+					/*if (hatchet && hitstats)
 					{
 						int cleft = hitstats->getEffectActive(EFF_HUNTED);
 						hitstats->setEffectActive(EFF_HUNTED, cleft + 1);
@@ -13287,7 +13282,7 @@ void Entity::attack(int pose, int charge, Entity* target)
 
 						double bonusDamage = (hitstats->MAXHP - hitstats->HP) * (0.05 * cleft); // 5-15% missing HP
 						damage += bonusDamage;
-					}
+					}*/
 
 
 					Sint32 oldHP = hitstats->HP;
@@ -14056,8 +14051,9 @@ void Entity::attack(int pose, int charge, Entity* target)
 					if ( (hitstats->getEffectActive(EFF_WEBBED) || hitstats->getEffectActive(EFF_MAGIC_GREASE) 
 						|| pose == PLAYER_POSE_GOLEM_SMASH 
 						|| hit.entity->myconidReboundOnHit(this)
-						|| (myStats->type == GNOME && myStats->weapon && !shapeshifted && myStats->weapon->type == TOOL_PICKAXE))
-						&& !hitstats->getEffectActive(EFF_KNOCKBACK) && hit.entity->setEffect(EFF_KNOCKBACK, true, 30, false) )
+						|| (myStats->type == GNOME && myStats->weapon && !shapeshifted && myStats->weapon->type == TOOL_PICKAXE)
+						|| (hit.entity->behavior == &actPlayer && isLevitating(hitstats)) ) // inflict knockback on floating players
+						&& !hitstats->getEffectActive(EFF_KNOCKBACK) && hit.entity->setEffect(EFF_KNOCKBACK, true, 30, false) ) 
 					{
 						real_t baseMultiplier = 0.7;
 						knockbackInflicted = true;
@@ -18970,6 +18966,11 @@ bool Entity::checkEnemy(Entity* your)
 		return false;
 	}
 
+	if ( your->isInvisible() && behavior == &actMonster )
+	{
+		return true; // invisible! stranger danger!
+	}
+
 	if ( yourStats->getEffectActive(EFF_PENANCE) >= 1 && yourStats->getEffectActive(EFF_PENANCE) < 1 + MAXPLAYERS
 		&& behavior == &actPlayer && your->behavior == &actMonster )
 	{
@@ -19619,6 +19620,10 @@ bool Entity::checkFriend(Entity* your)
 		{
 			return false;
 		}
+	}
+	else if ( your->isInvisible() && behavior == &actMonster )
+	{
+		return false; // invisible! stranger danger!
 	}
 	else if ( yourStats->getEffectActive(EFF_PENANCE) >= 1 && yourStats->getEffectActive(EFF_PENANCE) < 1 + MAXPLAYERS
 		&& behavior == &actPlayer && your->behavior == &actMonster )

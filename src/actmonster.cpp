@@ -1666,6 +1666,7 @@ bool makeFollower(int monsterclicked, bool ringconflict, char namesays[64],
 
 	bool canAlly = false;
 	bool roseEvent = false;
+	bool paidOff = false;
 	if ( skillCapstoneUnlocked(monsterclicked, PRO_LEADERSHIP) )
 	{
 		int allowedFollowers = 8;
@@ -1868,7 +1869,7 @@ bool makeFollower(int monsterclicked, bool ringconflict, char namesays[64],
 		else if ( strcmp(myStats->name, "") && !monsterNameIsGeneric(*myStats)
 			&& ((stats[monsterclicked]->getModifiedProficiency(PRO_LEADERSHIP) + stats[monsterclicked]->CHR) < 60) )
 		{
-			if ( race != HUMAN )
+			if ( race != HUMAN || race == HUMAN ) // no king arthur? experiment with this
 			{
 				tryAlly = false;
 				messagePlayer(monsterclicked, MESSAGE_INTERACTION, Language::get(3481), myStats->name);
