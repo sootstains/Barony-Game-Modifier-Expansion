@@ -700,8 +700,8 @@ int initApp(char const * const title, int fullscreen)
 		updateLoadingScreen(20);
 
 		// load models
-		std::string modelsDirectory = PHYSFS_getRealDir("models/models.txt");
-		modelsDirectory.append(PHYSFS_getDirSeparator()).append("models/models.txt");
+		std::string modelsDirectory = PHYSFS_getRealDir("decrepitmodels/models.txt");
+		modelsDirectory.append(PHYSFS_getDirSeparator()).append("decrepitmodels/models.txt"); // little fix so the mod can load
 		printlog("loading models from directory %s...\n", modelsDirectory.c_str());
 
 		fp = openDataFile(modelsDirectory.c_str(), "rb");
