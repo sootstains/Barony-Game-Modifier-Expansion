@@ -547,6 +547,23 @@ typedef enum ItemType
 	SPELLBOOK_DOMINATE,
 	STEEL_HATCHET,
 	RING_KINESIS,
+	AMULET_INFUSION,
+	AMULET_INFUSION_WATER,
+	AMULET_INFUSION_BOOZE,
+	AMULET_INFUSION_JUICE,
+	AMULET_INFUSION_ACID,
+	AMULET_INFUSION_SICKNESS,
+	AMULET_INFUSION_CONFUSION,
+	AMULET_INFUSION_CUREAILMENT,
+	AMULET_INFUSION_BLINDNESS,
+	AMULET_INFUSION_INVISIBILITY,
+	AMULET_INFUSION_LEVITATION,
+	AMULET_INFUSION_SPEED,
+	AMULET_INFUSION_STRENGTH,
+	AMULET_INFUSION_PARALYSIS,
+	AMULET_INFUSION_HEALING,
+	AMULET_INFUSION_EXTRAHEALING,
+	AMULET_INFUSION_POLYMORPH,
 	ITEM_ENUM_MAX
 } ItemType;
 const int NUMITEMS = ITEM_ENUM_MAX;
@@ -757,6 +774,8 @@ public:
 	bool isTinkeringItemWithThrownLimit() const;
 	static void onItemIdentified(int player, Item* tempItem);
 	static void itemFindUniqueAppearance(Item* tempItem, std::unordered_set<Uint32>& appearancesOfSimilarItems);
+
+	void storePotionInAmulet(Entity* my, Stat* myStats, Item*& amulet);
 };
 extern Uint32 itemuids;
 

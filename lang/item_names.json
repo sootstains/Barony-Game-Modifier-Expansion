@@ -2104,6 +2104,74 @@
                 "ring_kinesis": {
             "name_identified": "ring of kinesis",
             "name_unidentified": "ring"
+        },
+                "amulet_infusion": {
+            "name_identified": "amulet of infusion",
+            "name_unidentified": "amulet"
+        },
+                "amulet_infusion_water": {
+            "name_identified": "wet amulet of infusion",
+            "name_unidentified": "wet amulet"
+        },
+                "amulet_infusion_booze": {
+            "name_identified": "stiff amulet of infusion",
+            "name_unidentified": "stiff amulet"
+        },
+                "amulet_infusion_juice": {
+            "name_identified": "sweet amulet of infusion",
+            "name_unidentified": "sweet amulet"
+        },
+                "amulet_infusion_acid": {
+            "name_identified": "corroded amulet of infusion",
+            "name_unidentified": "corroded amulet"
+        },
+                "amulet_infusion_sickness": {
+            "name_identified": "noxious amulet of infusion",
+            "name_unidentified": "noxious amulet"
+        },
+                "amulet_infusion_confusion": {
+            "name_identified": "incoherent amulet of infusion",
+            "name_unidentified": "incoherent amulet"
+        },
+                "amulet_infusion_cureailment": {
+            "name_identified": "gleaming amulet of infusion",
+            "name_unidentified": "gleaming amulet"
+        },
+                "amulet_infusion_blindness": {
+            "name_identified": "blackened amulet of infusion",
+            "name_unidentified": "blackened amulet"
+        },
+                "amulet_infusion_invsibility": {
+            "name_identified": "blurry amulet of infusion",
+            "name_unidentified": "blurry amulet"
+        },
+                "amulet_infusion_levitation": {
+            "name_identified": "feathered amulet of infusion",
+            "name_unidentified": "feathered amulet"
+        },
+                "amulet_infusion_speed": {
+            "name_identified": "gossamer amulet of infusion",
+            "name_unidentified": "gossamer amulet"
+        },
+                "amulet_infusion_strength": {
+            "name_identified": "hardened amulet of infusion",
+            "name_unidentified": "hardened amulet"
+        },
+                "amulet_infusion_paralysis": {
+            "name_identified": "rigid amulet of infusion",
+            "name_unidentified": "rigid amulet"
+        },
+                "amulet_infusion_healing": {
+            "name_identified": "bleeding amulet of infusion",
+            "name_unidentified": "bleeding amulet"
+        },
+                "amulet_infusion_extrahealing": {
+            "name_identified": "overflowing amulet of infusion",
+            "name_unidentified": "overflowing amulet"
+        },
+                "amulet_infusion_polymorph": {
+            "name_identified": "shifting amulet of infusion",
+            "name_unidentified": "shifting amulet"
         }
     },
 	"spell_names": {

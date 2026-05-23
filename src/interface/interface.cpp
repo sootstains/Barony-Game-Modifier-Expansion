@@ -8592,11 +8592,11 @@ ItemType alchemyCookResult(int player, Item* potion1Item, Item* potion2Item, int
 
 		if ( potion1 == TOOL_TOWEL )
 		{
-			outCreateCount = 4 * (int)(potion1Item->status);
+			outCreateCount = 2 * (int)(potion1Item->status); // nerfed from 4 to 2. these things are op!
 		}
 		else if ( potion2 == TOOL_TOWEL )
 		{
-			outCreateCount = 4 * (int)(potion2Item->status);
+			outCreateCount = 2 * (int)(potion2Item->status);
 		}
 		if ( potion1 == FOOD_RATION )
 		{

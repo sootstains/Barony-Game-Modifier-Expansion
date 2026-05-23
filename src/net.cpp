@@ -8927,6 +8927,15 @@ static std::unordered_map<Uint32, void(*)()> serverPacketHandlers = {
 		return;
 	} },
 
+	// the client infused a potion into their amulet
+	{ 'INFU', []() {
+		const int player = std::min(net_packet->data[4], (Uint8)(MAXPLAYERS - 1));
+
+		stats[player]->amulet->type = static_cast<ItemType>(net_packet->data[5]);
+		stats[player]->amulet->beatitude = net_packet->data[6];
+		return;
+	} },
+
 	// the client changed beatitude of equipment.
 	{'BEAT', [](){
 	    const int player = std::min(net_packet->data[4], (Uint8)(MAXPLAYERS - 1));

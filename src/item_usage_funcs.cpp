@@ -309,7 +309,26 @@ bool item_PotionWater(Item*& item, Entity* entity, Entity* usedBy)
 	if ( multiplayer != CLIENT ) // server/singleplayer
 	{
 		// play drink sound
-		if ( item->beatitude > 0 )
+		if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+		{
+			playSoundEntity(entity, 52, 64);
+		
+			item->storePotionInAmulet(entity, stats, stats->amulet);
+			potionUseAbundanceEffect(item, entity, usedBy);
+			consumeItem(item, player);
+
+			if (local_rng.rand() % 500 == 0)
+			{
+				messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+			}
+			else
+			{
+				messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+			}
+		
+			return true;
+		}
+		else if ( item->beatitude > 0 )
 		{
 			if ( stats->type == GHOUL ||
 				stats->type == LICH ||
@@ -441,6 +460,14 @@ bool item_PotionWater(Item*& item, Entity* entity, Entity* usedBy)
 
 	// code below is only run by the player that drank the potion.
 	// if it was thrown, then the function returns in the above code as processed by the server.
+	
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+		return true;
+	}
 
 	if ( item->beatitude == 0 )
 	{
@@ -717,10 +744,35 @@ bool item_PotionBooze(Item*& item, Entity* entity, Entity* usedBy, bool shouldCo
 
 	if ( multiplayer == CLIENT )
 	{
+		if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+		{
+			item->storePotionInAmulet(entity, stats, stats->amulet);
+		}
 		potionUseAbundanceEffect(item, entity, usedBy);
 		consumeItem(item, player);
 		return true;
 	}
+
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		playSoundEntity(entity, 52, 64);
+		
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+
+		if (local_rng.rand() % 500 == 0)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+		}
+		else
+		{
+			messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+		}
+		
+		return true;
+	}
+
 
 	messagePlayer(player, MESSAGE_WORLD, Language::get(758));
 	messagePlayer(player, MESSAGE_STATUS, Language::get(759));
@@ -868,13 +920,39 @@ bool item_PotionJuice(Item*& item, Entity* entity, Entity* usedBy)
 		}
 		return false;
 	}
+	
 	if ( multiplayer == CLIENT )
 	{
+		if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+		{
+			item->storePotionInAmulet(entity, stats, stats->amulet);
+		}
 		potionUseAbundanceEffect(item, entity, usedBy);
 		consumeItem(item, player);
+		
 		return true;
 	}
 
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		playSoundEntity(entity, 52, 64);
+		
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+
+		if (local_rng.rand() % 500 == 0)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+		}
+		else
+		{
+			messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+		}
+		
+		return true;
+	}
+	
 	if ( item->beatitude < 0 )
 	{
 		//Cursed effect inebriates you.
@@ -1068,10 +1146,34 @@ bool item_PotionSickness(Item*& item, Entity* entity, Entity* usedBy)
 		camera_shakey += 10;
 		if ( multiplayer == CLIENT )
 		{
+			if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+			{
+				item->storePotionInAmulet(entity, stats, stats->amulet);
+			}
 			potionUseAbundanceEffect(item, entity, usedBy);
 			consumeItem(item, player);
 			return true;
 		}
+	}
+
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		playSoundEntity(entity, 52, 64);
+		
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+
+		if (local_rng.rand() % 500 == 0)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+		}
+		else
+		{
+			messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+		}
+		
+		return true;
 	}
 
 	int damage = (item->potionGetEffectDamage(entity, stats)) * potionDamageSkillMultipliers[std::min(skillLVL, 5)];
@@ -1276,8 +1378,32 @@ bool item_PotionConfusion(Item*& item, Entity* entity, Entity* usedBy)
 	}
 	if ( multiplayer == CLIENT )
 	{
+		if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+		{
+			item->storePotionInAmulet(entity, stats, stats->amulet);
+		}
 		potionUseAbundanceEffect(item, entity, usedBy);
 		consumeItem(item, player);
+		return true;
+	}
+
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		playSoundEntity(entity, 52, 64);
+		
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+
+		if (local_rng.rand() % 500 == 0)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+		}
+		else
+		{
+			messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+		}
+		
 		return true;
 	}
 
@@ -1395,8 +1521,32 @@ bool item_PotionCureAilment(Item*& item, Entity* entity, Entity* usedBy)
 	}
 	if ( multiplayer == CLIENT )
 	{
+		if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+		{
+			item->storePotionInAmulet(entity, stats, stats->amulet);
+		}
 		potionUseAbundanceEffect(item, entity, usedBy);
 		consumeItem(item, player);
+		return true;
+	}
+
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		playSoundEntity(entity, 52, 64);
+		
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+
+		if (local_rng.rand() % 500 == 0)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+		}
+		else
+		{
+			messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+		}
+		
 		return true;
 	}
 
@@ -1517,8 +1667,32 @@ bool item_PotionBlindness(Item*& item, Entity* entity, Entity* usedBy)
 	}
 	if ( multiplayer == CLIENT )
 	{
+		if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+		{
+			item->storePotionInAmulet(entity, stats, stats->amulet);
+		}
 		potionUseAbundanceEffect(item, entity, usedBy);
 		consumeItem(item, player);
+		return true;
+	}
+
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		playSoundEntity(entity, 52, 64);
+		
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+
+		if (local_rng.rand() % 500 == 0)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+		}
+		else
+		{
+			messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+		}
+		
 		return true;
 	}
 
@@ -1599,8 +1773,32 @@ bool item_PotionInvisibility(Item*& item, Entity* entity, Entity* usedBy)
 
 	if ( multiplayer == CLIENT )
 	{
+		if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+		{
+			item->storePotionInAmulet(entity, stats, stats->amulet);
+		}
 		potionUseAbundanceEffect(item, entity, usedBy);
 		consumeItem(item, player);
+		return true;
+	}
+
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		playSoundEntity(entity, 52, 64);
+		
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+
+		if (local_rng.rand() % 500 == 0)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+		}
+		else
+		{
+			messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+		}
+		
 		return true;
 	}
 
@@ -1692,8 +1890,32 @@ bool item_PotionLevitation(Item*& item, Entity* entity, Entity* usedBy)
 	}
 	if ( multiplayer == CLIENT )
 	{
+		if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+		{
+			item->storePotionInAmulet(entity, stats, stats->amulet);
+		}
 		potionUseAbundanceEffect(item, entity, usedBy);
 		consumeItem(item, player);
+		return true;
+	}
+
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		playSoundEntity(entity, 52, 64);
+		
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+
+		if (local_rng.rand() % 500 == 0)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+		}
+		else
+		{
+			messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+		}
+		
 		return true;
 	}
 
@@ -1774,11 +1996,34 @@ bool item_PotionSpeed(Item*& item, Entity* entity, Entity* usedBy)
 	}
 	if ( multiplayer == CLIENT )
 	{
+		if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+		{
+			item->storePotionInAmulet(entity, stats, stats->amulet);
+		}
 		potionUseAbundanceEffect(item, entity, usedBy);
 		consumeItem(item, player);
 		return true;
 	}
 
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		playSoundEntity(entity, 52, 64);
+		
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+
+		if (local_rng.rand() % 500 == 0)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+		}
+		else
+		{
+			messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+		}
+		
+		return true;
+	}
 
 	if ( item->beatitude < 0 )
 	{
@@ -1875,8 +2120,32 @@ bool item_PotionStrength(Item*& item, Entity* entity, Entity* usedBy)
 	}
 	if ( multiplayer == CLIENT )
 	{
+		if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+		{
+			item->storePotionInAmulet(entity, stats, stats->amulet);
+		}
 		potionUseAbundanceEffect(item, entity, usedBy);
 		consumeItem(item, player);
+		return true;
+	}
+
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		playSoundEntity(entity, 52, 64);
+		
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+
+		if (local_rng.rand() % 500 == 0)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+		}
+		else
+		{
+			messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+		}
+		
 		return true;
 	}
 
@@ -1975,10 +2244,34 @@ bool item_PotionAcid(Item*& item, Entity* entity, Entity* usedBy)
 		camera_shakey += 10;
 		if ( multiplayer == CLIENT )
 		{
+			if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+			{
+				item->storePotionInAmulet(entity, stats, stats->amulet);
+			}
 			potionUseAbundanceEffect(item, entity, usedBy);
 			consumeItem(item, player);
 			return true;
 		}
+	}
+
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		playSoundEntity(entity, 52, 64);
+		
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+
+		if (local_rng.rand() % 500 == 0)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+		}
+		else
+		{
+			messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+		}
+		
+		return true;
 	}
 
 	int damage = (item->potionGetEffectDamage(entity, stats)) * potionDamageSkillMultipliers[std::min(skillLVL, 5)];
@@ -2252,8 +2545,32 @@ bool item_PotionParalysis(Item*& item, Entity* entity, Entity* usedBy)
 	}
 	if ( multiplayer == CLIENT )
 	{
+		if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+		{
+			item->storePotionInAmulet(entity, stats, stats->amulet);
+		}
 		potionUseAbundanceEffect(item, entity, usedBy);
 		consumeItem(item, player);
+		return true;
+	}
+
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		playSoundEntity(entity, 52, 64);
+		
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+
+		if (local_rng.rand() % 500 == 0)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+		}
+		else
+		{
+			messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+		}
+		
 		return true;
 	}
 
@@ -2337,10 +2654,35 @@ bool item_PotionHealing(Item*& item, Entity* entity, Entity* usedBy, bool should
 	}
 	if ( multiplayer == CLIENT )
 	{
+		if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+		{
+			item->storePotionInAmulet(entity, stats, stats->amulet);
+		}
 		potionUseAbundanceEffect(item, entity, usedBy);
 		consumeItem(item, player);
 		return true;
 	}
+
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		playSoundEntity(entity, 52, 64);
+		
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+
+		if (local_rng.rand() % 500 == 0)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+		}
+		else
+		{
+			messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+		}
+		
+		return true;
+	}
+
 	if ( stats->HP == stats->MAXHP )
 	{
 		playSoundEntity(entity, 52, 64);
@@ -2497,10 +2839,35 @@ bool item_PotionExtraHealing(Item*& item, Entity* entity, Entity* usedBy, bool s
 	}
 	if ( multiplayer == CLIENT )
 	{
+		if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+		{
+			item->storePotionInAmulet(entity, stats, stats->amulet);
+		}
 		potionUseAbundanceEffect(item, entity, usedBy);
 		consumeItem(item, player);
 		return true;
 	}
+
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		playSoundEntity(entity, 52, 64);
+		
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+
+		if (local_rng.rand() % 500 == 0)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+		}
+		else
+		{
+			messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+		}
+		
+		return true;
+	}
+
 	if ( stats->HP == stats->MAXHP )
 	{
 		playSoundEntity(entity, 52, 64);
@@ -2786,8 +3153,32 @@ Entity* item_PotionPolymorph(Item*& item, Entity* entity, Entity* usedBy)
 	}
 	if ( multiplayer == CLIENT )
 	{
+		if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+		{
+			item->storePotionInAmulet(entity, stats, stats->amulet);
+		}
 		potionUseAbundanceEffect(item, entity, usedBy);
 		consumeItem(item, player);
+		return nullptr;
+	}
+
+	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
+	{
+		playSoundEntity(entity, 52, 64);
+		
+		item->storePotionInAmulet(entity, stats, stats->amulet);
+		potionUseAbundanceEffect(item, entity, usedBy);
+		consumeItem(item, player);
+
+		if (local_rng.rand() % 500 == 0)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You spill the liquid all over your amulet, you messy boy.");
+		}
+		else
+		{
+			messagePlayer(player, MESSAGE_STATUS, "The liquid is absorbed by your amulet.");
+		}
+		
 		return nullptr;
 	}
 

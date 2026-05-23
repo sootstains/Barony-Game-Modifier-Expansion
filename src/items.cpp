@@ -2947,6 +2947,23 @@ void useItem(Item* item, const int player, Entity* usedBy, bool unequipForDroppi
 		case AMULET_LIFESAVING:
 		case AMULET_WATERBREATHING:
 		case AMULET_MAGICREFLECTION:
+		case AMULET_INFUSION: // lots of infusion
+		case AMULET_INFUSION_WATER:
+		case AMULET_INFUSION_BOOZE:
+		case AMULET_INFUSION_JUICE:
+		case AMULET_INFUSION_ACID:
+		case AMULET_INFUSION_SICKNESS:
+		case AMULET_INFUSION_CONFUSION:
+		case AMULET_INFUSION_CUREAILMENT:
+		case AMULET_INFUSION_BLINDNESS:
+		case AMULET_INFUSION_INVISIBILITY:
+		case AMULET_INFUSION_LEVITATION:
+		case AMULET_INFUSION_SPEED:
+		case AMULET_INFUSION_STRENGTH:
+		case AMULET_INFUSION_PARALYSIS:
+		case AMULET_INFUSION_HEALING:
+		case AMULET_INFUSION_EXTRAHEALING:
+		case AMULET_INFUSION_POLYMORPH:
 			equipItemResult = equipItem(item, &stats[player]->amulet, player, checkInventorySpaceForPaperDoll);
 			break;
 		case AMULET_STRANGULATION:
@@ -7815,4 +7832,121 @@ void Item::onItemIdentified(int player, Item* tempItem)
 			clientSendAppearanceUpdateToServer(player, tempItem, true);
 		}
 	}
+}
+
+void Item::storePotionInAmulet(Entity* my, Stat* myStats, Item*& amulet)
+{
+	if (!my)
+	{
+		return;
+	}
+	if (!myStats)
+	{
+		return;
+	}
+
+	Item* potion = this;
+
+	if ( !(potion && itemCategory(potion) == POTION) )
+	{
+		return;
+	}
+	if ( !(amulet && amulet->type == AMULET_INFUSION) )
+	{
+		return;
+	}
+
+	int player = -1;
+
+	if ( my->behavior == &actPlayer )
+	{
+		player = my->skill[2];
+	}
+
+	switch (potion->type) // copy potion effect
+	{
+		case POTION_WATER:
+		amulet->type = AMULET_INFUSION_WATER;
+		break;
+
+		case POTION_BOOZE:
+		amulet->type = AMULET_INFUSION_BOOZE;
+		break;
+
+		case POTION_JUICE:
+		amulet->type = AMULET_INFUSION_JUICE;
+		break;
+		
+		case POTION_ACID:
+		amulet->type = AMULET_INFUSION_ACID;
+		break;
+
+		case POTION_SICKNESS:
+		amulet->type = AMULET_INFUSION_SICKNESS;
+		break;
+
+		case POTION_CONFUSION:
+		amulet->type = AMULET_INFUSION_CONFUSION;
+		break;
+
+		case POTION_CUREAILMENT:
+		amulet->type = AMULET_INFUSION_CUREAILMENT;
+		break;
+
+		case POTION_BLINDNESS:
+		amulet->type = AMULET_INFUSION_BLINDNESS;
+		break;
+
+		case POTION_INVISIBILITY:
+		amulet->type = AMULET_INFUSION_INVISIBILITY;
+		break;
+
+		case POTION_LEVITATION:
+		amulet->type = AMULET_INFUSION_LEVITATION;
+		break;
+
+		case POTION_SPEED:
+		amulet->type = AMULET_INFUSION_SPEED;
+		break;
+
+		case POTION_STRENGTH:
+		amulet->type = AMULET_INFUSION_STRENGTH;
+		break;
+
+		case POTION_PARALYSIS:
+		amulet->type = AMULET_INFUSION_PARALYSIS;
+		break;
+
+		case POTION_HEALING:
+		amulet->type = AMULET_INFUSION_HEALING;
+		break;
+		
+		case POTION_EXTRAHEALING:
+		amulet->type = AMULET_INFUSION_EXTRAHEALING;
+		break;
+
+		case POTION_POLYMORPH:
+		amulet->type = AMULET_INFUSION_POLYMORPH;
+		break;
+
+		default:
+		break;
+	}
+
+	amulet->beatitude += potion->beatitude; // inherit potion beatitude
+
+
+	/*if ( player >= 0 && multiplayer == CLIENT )
+	{
+		strcpy((char*)net_packet->data, "INFU");
+		net_packet->data[4] = player;
+		net_packet->data[5] = amulet->type;
+		net_packet->data[6] = amulet->beatitude;
+		net_packet->address.host = net_server.host;
+		net_packet->address.port = net_server.port;
+		net_packet->len = 7;
+		sendPacketSafe(net_sock, -1, net_packet, 0);
+	}*/
+
+
 }
