@@ -1360,6 +1360,9 @@ public:
 	bool degradeAmuletProc(Stat* myStats, ItemType type);
 	bool myconidReboundOnHit(Entity* attacker);
 	void playerShakeGrowthHelmet();
+
+	bool drinkPotionFromInfusion(Entity* hitentity);
+
 };
 
 Monster getMonsterFromPlayerRace(int playerRace); // convert playerRace into the relevant monster type

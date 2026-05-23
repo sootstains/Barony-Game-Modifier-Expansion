@@ -13295,6 +13295,26 @@ void Entity::attack(int pose, int charge, Entity* target)
 						{
 							hit.entity->defyFleshProc(this);
 						}
+
+						bool hasInfusion = false;
+
+						if ( myStats->amulet && (myStats->amulet->type >= AMULET_INFUSION_WATER && myStats->amulet->type <= AMULET_INFUSION_POLYMORPH) )
+						{
+							hasInfusion = true;
+						}
+
+						if ( hasInfusion && (backstab || hit.entity->behavior == &actPlayer) )
+						{
+							if ( drinkPotionFromInfusion(hit.entity) )
+							{
+								degradeAmuletProc(myStats, myStats->amulet->type);
+
+								if ( player >= 0 )
+								{
+									messagePlayer(player, MESSAGE_EQUIPMENT, "Your amulet glows a faint purple.");
+								}
+							}
+						}
 					}
 
 					bool skillIncreased = false;
@@ -32592,7 +32612,8 @@ bool Entity::degradeAmuletProc(Stat* myStats, ItemType type)
 	{
 		player = this->skill[2];
 	}
-	if ( myStats->amulet && myStats->amulet->type == type && (type == AMULET_POISONRESISTANCE || type == AMULET_BURNINGRESIST) )
+	if ( myStats->amulet && myStats->amulet->type == type && ( ( type >= AMULET_INFUSION_WATER && type <= AMULET_INFUSION_POLYMORPH ) ||
+	(type == AMULET_POISONRESISTANCE || type == AMULET_BURNINGRESIST) ) )
 	{
 		if ( myStats->amulet->status > BROKEN )
 		{
@@ -32603,6 +32624,12 @@ bool Entity::degradeAmuletProc(Stat* myStats, ItemType type)
 			myStats->itemLastDegradeTick[myStats->amulet->type] = ::ticks;
 
 			int chance = 8 + 4 * (shouldInvertEquipmentBeatitude(myStats) ? abs(myStats->amulet->beatitude) : myStats->amulet->beatitude);
+
+			if ( type >= AMULET_INFUSION_WATER && type <= AMULET_INFUSION_POLYMORPH )
+			{
+				chance = 1;
+			}
+
 			if ( chance > 0 && local_rng.rand() % std::max(chance, 1) == 0 && !this->spellEffectPreserveItem(myStats->amulet) )
 			{
 				if ( player >= 0 && type == AMULET_BURNINGRESIST )
@@ -32779,4 +32806,151 @@ real_t Entity::getHealingSpellPotionModifierFromEffects(bool processLevelup)
 	}
 
 	return result;
+}
+
+bool Entity::drinkPotionFromInfusion(Entity* hitentity)
+{
+	Entity* attacker = this;
+	
+	if ( !attacker )
+	{
+		return false;
+	}
+
+	Stat* myStats = attacker->getStats();
+
+	if ( !myStats )
+	{
+		return false;
+	}
+
+	if ( !hitentity )
+	{
+		return false;
+	}
+
+	Stat* hitstats = hitentity->getStats();
+
+	if ( !(hitstats && hitstats->HP > 0) )
+	{
+		return false;
+	}
+
+	int player = -1;
+
+	if ( hitentity->behavior == &actPlayer )
+	{
+		player = hitentity->skill[2];
+	}
+
+	Item* amulet = nullptr;
+
+	if ( myStats->amulet )
+	{
+		amulet = myStats->amulet;
+	}
+	else
+	{
+		return false;
+	}
+
+	int beatitude = amulet->beatitude;
+
+		Item* potion = newItem(WOODEN_SHIELD, EXCELLENT, beatitude, 1, local_rng.rand(), true, nullptr);
+
+	if ( amulet->type >= AMULET_INFUSION_WATER && amulet->type <= AMULET_INFUSION_POLYMORPH )
+	{
+		switch ( amulet->type )
+		{
+			case AMULET_INFUSION_WATER:
+			potion->type = POTION_WATER;
+			item_PotionWater(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_BOOZE:
+			potion->type = POTION_BOOZE;
+			item_PotionBooze(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_JUICE:
+			potion->type = POTION_JUICE;
+			item_PotionJuice(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_ACID:
+			potion->type = POTION_ACID;
+			item_PotionAcid(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_SICKNESS:
+			potion->type = POTION_SICKNESS;
+			item_PotionSickness(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_CONFUSION:
+			potion->type = POTION_CONFUSION;
+			item_PotionConfusion(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_CUREAILMENT:
+			potion->type = POTION_CUREAILMENT;
+			item_PotionCureAilment(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_BLINDNESS:
+			potion->type = POTION_BLINDNESS;
+			item_PotionBlindness(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_INVISIBILITY:
+			potion->type = POTION_INVISIBILITY;
+			item_PotionInvisibility(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_LEVITATION:
+			potion->type = POTION_LEVITATION;
+			item_PotionLevitation(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_SPEED:
+			potion->type = POTION_SPEED;
+			item_PotionSpeed(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_STRENGTH:
+			potion->type = POTION_STRENGTH;
+			item_PotionStrength(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_PARALYSIS:
+			potion->type = POTION_PARALYSIS;
+			item_PotionParalysis(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_HEALING:
+			potion->type = POTION_HEALING;
+			item_PotionHealing(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_EXTRAHEALING:
+			potion->type = POTION_EXTRAHEALING;
+			item_PotionExtraHealing(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_POLYMORPH:
+			potion->type = POTION_POLYMORPH;
+			item_PotionPolymorph(potion, hitentity, attacker);
+			break;
+
+			default:
+			return false;
+			break;
+		}
+		
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
