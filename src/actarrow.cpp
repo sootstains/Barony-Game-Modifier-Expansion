@@ -987,7 +987,7 @@ void actArrow(Entity* my)
 
 					bool hasInfusion = false;
 
-					if ( parent->getStats()->amulet && 
+					if ( parent && parent->getStats() && parent->getStats()->amulet && 
 					(parent->getStats()->amulet->type >= AMULET_INFUSION_WATER && parent->getStats()->amulet->type <= AMULET_INFUSION_POLYMORPH) )
 					{
 						hasInfusion = true;

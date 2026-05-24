@@ -2169,6 +2169,18 @@
             "name_identified": "overflowing amulet of infusion",
             "name_unidentified": "overflowing amulet"
         },
+                "amulet_infusion_firestorm": {
+            "name_identified": "melted amulet of infusion",
+            "name_unidentified": "melting amulet"
+        },
+                "amulet_infusion_icestorm": {
+            "name_identified": "rimed amulet of infusion",
+            "name_unidentified": "rimed amulet"
+        },
+                "amulet_infusion_thunderstorm": {
+            "name_identified": "buzzing amulet of infusion",
+            "name_unidentified": "buzzing amulet"
+        },
                 "amulet_infusion_polymorph": {
             "name_identified": "shifting amulet of infusion",
             "name_unidentified": "shifting amulet"
