@@ -13303,16 +13303,16 @@ void Entity::attack(int pose, int charge, Entity* target)
 							hasInfusion = true;
 						}
 
-						if ( hasInfusion && (backstab || hit.entity->behavior == &actPlayer) )
+						if ( hasInfusion && ( backstab || this->friendlyFireProtection(hit.entity) ) )
 						{
 							if ( drinkPotionFromInfusion(hit.entity) )
 							{
-								degradeAmuletProc(myStats, myStats->amulet->type);
-
 								if ( player >= 0 )
 								{
 									messagePlayer(player, MESSAGE_EQUIPMENT, "Your amulet glows a faint purple.");
 								}
+
+								degradeAmuletProc(myStats, myStats->amulet->type);
 							}
 						}
 					}
@@ -32935,6 +32935,21 @@ bool Entity::drinkPotionFromInfusion(Entity* hitentity)
 			case AMULET_INFUSION_EXTRAHEALING:
 			potion->type = POTION_EXTRAHEALING;
 			item_PotionExtraHealing(potion, hitentity, attacker);
+			break;
+
+			case AMULET_INFUSION_FIRESTORM:
+			potion->type = POTION_FIRESTORM;
+			item_PotionUnstableStorm(potion, hitentity, attacker, nullptr);
+			break;
+
+			case AMULET_INFUSION_ICESTORM:
+			potion->type = POTION_ICESTORM;
+			item_PotionUnstableStorm(potion, hitentity, attacker, nullptr);
+			break;
+
+			case AMULET_INFUSION_THUNDERSTORM:
+			potion->type = POTION_THUNDERSTORM;
+			item_PotionUnstableStorm(potion, hitentity, attacker, nullptr);
 			break;
 
 			case AMULET_INFUSION_POLYMORPH:

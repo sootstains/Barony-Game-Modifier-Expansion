@@ -2963,6 +2963,9 @@ void useItem(Item* item, const int player, Entity* usedBy, bool unequipForDroppi
 		case AMULET_INFUSION_PARALYSIS:
 		case AMULET_INFUSION_HEALING:
 		case AMULET_INFUSION_EXTRAHEALING:
+		case AMULET_INFUSION_FIRESTORM:
+		case AMULET_INFUSION_ICESTORM:
+		case AMULET_INFUSION_THUNDERSTORM:
 		case AMULET_INFUSION_POLYMORPH:
 			equipItemResult = equipItem(item, &stats[player]->amulet, player, checkInventorySpaceForPaperDoll);
 			break;
@@ -7923,6 +7926,18 @@ void Item::storePotionInAmulet(Entity* my, Stat* myStats, Item*& amulet)
 		
 		case POTION_EXTRAHEALING:
 		amulet->type = AMULET_INFUSION_EXTRAHEALING;
+		break;
+
+		case POTION_FIRESTORM:
+		amulet->type = AMULET_INFUSION_FIRESTORM;
+		break;
+
+		case POTION_ICESTORM:
+		amulet->type = AMULET_INFUSION_ICESTORM;
+		break;
+
+		case POTION_THUNDERSTORM:
+		amulet->type = AMULET_INFUSION_THUNDERSTORM;
 		break;
 
 		case POTION_POLYMORPH:

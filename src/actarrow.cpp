@@ -985,6 +985,14 @@ void actArrow(Entity* my)
 					Sint32 oldHP = hitstats->HP;
 					hit.entity->modHP(-damage);
 
+					bool hasInfusion = false;
+
+					if ( parent->getStats()->amulet && 
+					(parent->getStats()->amulet->type >= AMULET_INFUSION_WATER && parent->getStats()->amulet->type <= AMULET_INFUSION_POLYMORPH) )
+					{
+						hasInfusion = true;
+					}
+
 					if ( hitstats )
 					{
 						Sint32 damageTaken = oldHP - hitstats->HP;
@@ -1002,6 +1010,18 @@ void actArrow(Entity* my)
 								&& hitstats->type == MYCONID && hitstats->getEffectActive(EFF_GROWTH) >= 4 )
 							{
 								floorMagicCreateSpores(hit.entity, hit.entity->x, hit.entity->y, hit.entity, 0, SPELL_SPORES);
+							}
+						}
+						if ( hasInfusion && ( backstab || parent->friendlyFireProtection(hit.entity) ) )
+						{
+							if ( parent->drinkPotionFromInfusion(hit.entity) )
+							{
+								if ( parent->behavior == &actPlayer )
+								{
+									messagePlayer(parent->skill[2], MESSAGE_EQUIPMENT, "Your amulet glows a faint purple.");
+								}
+								
+								parent->degradeAmuletProc(parent->getStats(), parent->getStats()->amulet->type);
 							}
 						}
 					}

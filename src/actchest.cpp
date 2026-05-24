@@ -253,7 +253,7 @@ void createChestInventory(Entity* my, int chestType)
 					itemLevelCurvePostProcess(my, item, rng, currentlevel, &lastGeneratedItemType, &lastGeneratedItemSpellType);
 				}
 			}
-			else if ( rng.rand() % 2 )
+			else
 			{
 				//Spawn an amulet.
 				//newItem(static_cast<ItemType>(AMULET_SEXCHANGE + rng.rand() % 6), static_cast<Status>(WORN + rng.rand() % 3), 0, 1, rng.rand(), false, inventory);
@@ -263,7 +263,7 @@ void createChestInventory(Entity* my, int chestType)
 					itemLevelCurvePostProcess(my, item, rng, currentlevel, &lastGeneratedItemType, &lastGeneratedItemSpellType);
 				}
 			}
-			else
+			if ( rng.rand() % 4 == 0 )
 			{
 				newItem(QUIVER_CRYSTAL, SERVICABLE, 0, 10 + rng.rand() % 6, rng.rand(), false, inventory);
 			}
