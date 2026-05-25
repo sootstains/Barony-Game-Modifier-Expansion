@@ -3324,6 +3324,14 @@ void Entity::modHP(int amount)
 		}
 	}
 
+	if ( entitystats && amount > 0 )
+	{
+		if ( entitystats->getEffectActive(EFF_INFECTION) )
+		{
+			return;
+		}
+	}
+
 	Sint32 oldHP = entitystats->HP;
 	this->setHP(entitystats->HP + amount);
 	if ( oldHP > entitystats->HP )
@@ -13267,23 +13275,6 @@ void Entity::attack(int pose, int charge, Entity* target)
 						spawnBang(hit.entity->x, hit.entity->y, hit.entity->z);
 					}
 
-					/*if (hatchet && hitstats)
-					{
-						int cleft = hitstats->getEffectActive(EFF_HUNTED);
-						hitstats->setEffectActive(EFF_HUNTED, cleft + 1);
-						hitstats->EFFECTS_TIMERS[EFF_HUNTED] = std::max( hitstats->EFFECTS_TIMERS[EFF_HUNTED], 
-						std::min(hitstats->EFFECTS_TIMERS[EFF_HUNTED] + 250, 500) ); // can only add time up to 10 seconds 
-					}
-
-					if ( hitstats && hitstats->getEffectActive(EFF_HUNTED) && charge >= Stat::getMaxAttackCharge(myStats) / 2 ) // charged attacks benefit from cleft
-					{
-						int cleft = hitstats->getEffectActive(EFF_HUNTED);
-						cleft = std::min(cleft, 3); // max 3 stacks for this
-
-						double bonusDamage = (hitstats->MAXHP - hitstats->HP) * (0.05 * cleft); // 5-15% missing HP
-						damage += bonusDamage;
-					}*/
-
 
 					Sint32 oldHP = hitstats->HP;
 					hit.entity->modHP(-damage); // do the damage
@@ -13294,6 +13285,27 @@ void Entity::attack(int pose, int charge, Entity* target)
 						if ( damageTaken > 0 && hitstats->getEffectActive(EFF_DEFY_FLESH) )
 						{
 							hit.entity->defyFleshProc(this);
+						}
+
+						if ( hit.entity->behavior == &actMonster && hitstats->type != GHOUL && hitstats->HP <= 0 && hitstats->getEffectActive(EFF_INFECTION) 
+						&& myStats->type == GHOUL )
+						{
+							hit.entity->monsterAllyIndex = -1;
+							hitstats->leader_uid = 0;
+							serverUpdateEntitySkill(hit.entity, 42);
+
+							if ( Entity* monster = spellEffectPolymorph(hit.entity, nullptr, false, 0, GHOUL) )
+							{
+								hit.entity = monster;
+								hitstats = hit.entity->getStats();
+								
+								hitstats->clearEffect(EFF_INFECTION);
+								hitstats->EFFECTS_TIMERS[EFF_INFECTION] = 1;
+								hit.entity->modHP(hitstats->MAXHP);
+
+								playSoundEntity(hit.entity, 400, 64);
+
+							}
 						}
 
 						bool hasInfusion = false;
@@ -14705,6 +14717,27 @@ void Entity::attack(int pose, int charge, Entity* target)
 								{
 									Entity* gib = spawnGib(hit.entity, 211);
 									serverSpawnGibForClient(gib);
+								}
+							}
+							break;
+						}
+						case GHOUL: // infectious and evil!
+						{
+							if ( (gibtype[hitstats->type] == 1 || gibtype[hitstats->type] == 2) && !(hit.entity->isBossMonster()) && (hitstats->type != GHOUL) )
+							{
+								bool message = true;
+
+								if ( hitstats->getEffectActive(EFF_INFECTION) )
+								{
+									message = false;
+								}
+
+								hitstats->setEffectActive(EFF_INFECTION, 1);
+								hitstats->EFFECTS_TIMERS[EFF_INFECTION] = std::max(hitstats->EFFECTS_TIMERS[EFF_INFECTION], 60 * TICKS_PER_SECOND);
+
+								if (hit.entity->behavior == &actPlayer && message)
+								{
+									messagePlayerColor(hit.entity->skill[2], MESSAGE_COMBAT, makeColorRGB(255, 0, 0), "Your wounds begin to necrose.");
 								}
 							}
 							break;
@@ -18986,11 +19019,6 @@ bool Entity::checkEnemy(Entity* your)
 		return false;
 	}
 
-	if ( your->isInvisible() && behavior == &actMonster )
-	{
-		return true; // invisible! stranger danger!
-	}
-
 	if ( yourStats->getEffectActive(EFF_PENANCE) >= 1 && yourStats->getEffectActive(EFF_PENANCE) < 1 + MAXPLAYERS
 		&& behavior == &actPlayer && your->behavior == &actMonster )
 	{
@@ -19237,6 +19265,10 @@ bool Entity::checkEnemy(Entity* your)
 			else if ( yourStats->type == BAT_SMALL && behavior == &actPlayer )
 			{
 				result = true;
+			}
+			else if ( your->isInvisible() && behavior == &actMonster )
+			{
+				return true; // invisible! stranger danger!
 			}
 			else if ( behavior == &actPlayer && myStats->type != HUMAN )
 			{
@@ -19641,10 +19673,6 @@ bool Entity::checkFriend(Entity* your)
 			return false;
 		}
 	}
-	else if ( your->isInvisible() && behavior == &actMonster )
-	{
-		return false; // invisible! stranger danger!
-	}
 	else if ( yourStats->getEffectActive(EFF_PENANCE) >= 1 && yourStats->getEffectActive(EFF_PENANCE) < 1 + MAXPLAYERS
 		&& behavior == &actPlayer && your->behavior == &actMonster )
 	{
@@ -19854,6 +19882,10 @@ bool Entity::checkFriend(Entity* your)
 			else if ( yourStats->type == SHOPKEEPER && behavior == &actPlayer )
 			{
 				result = !ShopkeeperPlayerHostility.isPlayerEnemy(this->skill[2]);
+			}
+			else if ( your->isInvisible() && behavior == &actMonster )
+			{
+				return false; // invisible! stranger danger!
 			}
 			else if ( behavior == &actPlayer && myStats->type != HUMAN )
 			{

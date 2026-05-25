@@ -4914,7 +4914,7 @@ Sint32 Item::weaponGetAttack(const Stat* const wielder) const
 	}
 	else if ( type == QUIVER_LIGHTWEIGHT )
 	{
-		return attack - 2;
+		return attack + 0; // buffed this quiver -2 to +0 because it feels bad early & makes monsters really unthreatening
 	}
 	else if ( type == QUIVER_FIRE )
 	{

@@ -1725,7 +1725,13 @@ Entity* spellEffectPolymorph(Entity* target, Entity* parent, bool fromMagicSpell
 
 	Stat* targetStats = target->getStats();
 
-	if ( customMonster == NOTHING )
+	bool zombify = false;
+	if ( targetStats->HP <= 0 && targetStats->getEffectActive(EFF_INFECTION) )
+	{
+		zombify = true;
+	}
+
+	if ( customMonster == NOTHING || zombify )
 	{
 		if ( targetStats->type == LICH || targetStats->type == SHOPKEEPER || targetStats->type == DEVIL
 			|| targetStats->type == MINOTAUR || targetStats->type == LICH_FIRE || targetStats->type == LICH_ICE
@@ -2009,6 +2015,12 @@ Entity* spellEffectPolymorph(Entity* target, Entity* parent, bool fromMagicSpell
 		summonedStats->leader_uid = targetStats->leader_uid;
 		summonedStats->monsterIsCharmed = targetStats->monsterIsCharmed;
 		summonedStats->setAttribute("DOMINATED_CREATURE", targetStats->getAttribute("DOMINATED_CREATURE"));
+
+		if ( zombify )
+		{
+			summonedStats->MISC_FLAGS[STAT_FLAG_DISABLE_MINIBOSS] = 1;
+		}
+
 		Entity* leader = nullptr;
 		if ( summonedStats->leader_uid != 0 && summonedStats->type != SHADOW )
 		{

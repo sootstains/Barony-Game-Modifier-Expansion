@@ -1673,6 +1673,7 @@ bool Stat::statusEffectRemovedByCureAilment(const int effect, Entity* my)
 		case EFF_DISRUPTED:
 		case EFF_FROST:
 		case EFF_HOLY_FIRE:
+		case EFF_INFECTION:
 			return true;
 			break;
 		case EFF_DRUNK:

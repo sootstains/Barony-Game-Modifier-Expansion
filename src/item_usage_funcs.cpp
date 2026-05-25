@@ -312,6 +312,7 @@ bool item_PotionWater(Item*& item, Entity* entity, Entity* usedBy)
 		if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 		{
 			playSoundEntity(entity, 52, 64);
+			playSoundEntity(entity, 400, 64);
 		
 			item->storePotionInAmulet(entity, stats, stats->amulet);
 			potionUseAbundanceEffect(item, entity, usedBy);
@@ -756,6 +757,7 @@ bool item_PotionBooze(Item*& item, Entity* entity, Entity* usedBy, bool shouldCo
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);
@@ -936,6 +938,7 @@ bool item_PotionJuice(Item*& item, Entity* entity, Entity* usedBy)
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);
@@ -1159,6 +1162,7 @@ bool item_PotionSickness(Item*& item, Entity* entity, Entity* usedBy)
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);
@@ -1390,6 +1394,7 @@ bool item_PotionConfusion(Item*& item, Entity* entity, Entity* usedBy)
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);
@@ -1533,6 +1538,7 @@ bool item_PotionCureAilment(Item*& item, Entity* entity, Entity* usedBy)
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);
@@ -1679,6 +1685,7 @@ bool item_PotionBlindness(Item*& item, Entity* entity, Entity* usedBy)
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);
@@ -1785,6 +1792,7 @@ bool item_PotionInvisibility(Item*& item, Entity* entity, Entity* usedBy)
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);
@@ -1902,6 +1910,7 @@ bool item_PotionLevitation(Item*& item, Entity* entity, Entity* usedBy)
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);
@@ -2008,6 +2017,7 @@ bool item_PotionSpeed(Item*& item, Entity* entity, Entity* usedBy)
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);
@@ -2132,6 +2142,7 @@ bool item_PotionStrength(Item*& item, Entity* entity, Entity* usedBy)
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);
@@ -2257,6 +2268,7 @@ bool item_PotionAcid(Item*& item, Entity* entity, Entity* usedBy)
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);
@@ -2389,6 +2401,7 @@ bool item_PotionUnstableStorm(Item*& item, Entity* entity, Entity* usedBy, Entit
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);
@@ -2581,6 +2594,7 @@ bool item_PotionParalysis(Item*& item, Entity* entity, Entity* usedBy)
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);
@@ -2690,6 +2704,7 @@ bool item_PotionHealing(Item*& item, Entity* entity, Entity* usedBy, bool should
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);
@@ -2875,6 +2890,7 @@ bool item_PotionExtraHealing(Item*& item, Entity* entity, Entity* usedBy, bool s
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);
@@ -3189,6 +3205,7 @@ Entity* item_PotionPolymorph(Item*& item, Entity* entity, Entity* usedBy)
 	if ( stats->amulet && stats->amulet->type == AMULET_INFUSION )
 	{
 		playSoundEntity(entity, 52, 64);
+		playSoundEntity(entity, 400, 64);
 		
 		item->storePotionInAmulet(entity, stats, stats->amulet);
 		potionUseAbundanceEffect(item, entity, usedBy);

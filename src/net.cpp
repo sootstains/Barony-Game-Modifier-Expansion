@@ -4356,6 +4356,19 @@ static std::unordered_map<Uint32, void(*)()> clientPacketHandlers = {
 		}
 	}},
 
+	{'LKPK', [](){ // player broke a lockpick
+
+		int player = -1;
+		player = net_packet->data[4];
+
+		if (stats[player]->weapon->type == TOOL_LOCKPICK)	
+		{
+			Item* item = stats[player]->weapon;
+
+			consumeItem(item, player);
+		}	
+	}},
+
 	// steal armor (destroy it)
 	{'STLA', [](){
 	    Item* item = nullptr;

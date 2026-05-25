@@ -474,7 +474,7 @@ void createChestInventory(Entity* my, int chestType)
 			itemcount = 0 + rng.rand() % 2;
 			for ( i = 0; i < itemcount; ++i )
 			{
-				Item* thrown = newItem(itemLevelCurve(THROWN, minimumQuality, currentlevel, rng), WORN, 0, 3 + rng.rand() % 3, rng.rand(), false, inventory);
+				Item* thrown = newItem(itemLevelCurve(THROWN, minimumQuality, currentlevel, rng), WORN, 0, 1 + rng.rand() % 3, rng.rand(), false, inventory); // reduced from 3-5 to 1-3 each
 				if ( thrown )
 				{
 					itemLevelCurvePostProcess(my, thrown, rng, currentlevel, &lastGeneratedItemType, &lastGeneratedItemSpellType);
@@ -497,7 +497,7 @@ void createChestInventory(Entity* my, int chestType)
 			itemcount = rng.rand() % 3;
 			for ( i = 0; i < itemcount; ++i )
 			{
-				newItem(TOOL_BEARTRAP, durability, 0, 1 + rng.rand() % 3, rng.rand(), false, inventory);
+				newItem(TOOL_BEARTRAP, durability, 0, 1 + rng.rand() % 2, rng.rand(), false, inventory); // reduced from 1-3 to 1-2 each
 			}
 			// fall through
 		case 1:
@@ -529,7 +529,7 @@ void createChestInventory(Entity* my, int chestType)
 			itemcount = 1 + rng.rand() % 2;
 			for ( i = 0; i < itemcount; ++i )
 			{
-				Item* thrown = newItem(itemLevelCurve(THROWN, minimumQuality, currentlevel, rng), WORN, 0, 3 + rng.rand() % 3, rng.rand(), false, inventory);
+				Item* thrown = newItem(itemLevelCurve(THROWN, minimumQuality, currentlevel, rng), WORN, 0, 1 + rng.rand() % 3, rng.rand(), false, inventory); // reduced from 3-5 to 1-3 each
 				if ( thrown )
 				{
 					itemLevelCurvePostProcess(my, thrown, rng, currentlevel, &lastGeneratedItemType, &lastGeneratedItemSpellType);

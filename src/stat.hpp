@@ -158,6 +158,7 @@ static const int EFF_SANCTUARY = 133;
 static const int EFF_DUCKED = 134;
 static const int EFF_HUNTED = 135;
 static const int EFF_REJUVENATION = 136;
+static const int EFF_INFECTION = 137;
 static const int NUMEFFECTS = 160;
 
 // stats
@@ -542,6 +543,12 @@ public:
 	};
 	MonsterRangedAccuracy monsterRangedAccuracy;
 	std::map<ItemType, Uint32> itemLastDegradeTick;
+
+	// wanted by NPCs
+	Sint32 kinslayerHuman, kinslayerSkeleton, kinslayerSuccubus, kinslayerGoatman, kinslayerVampire, 
+	kinslayerAutomaton, kinslayerInsectoid, kinslayerIncubus, kinslayerGoblin,
+	kinslayerGnome, kinslayerDryad, kinslayerMyconid, kinslayerSalamander, kinslayerGremlin;
+
 };
 extern Stat* stats[MAXPLAYERS];
 

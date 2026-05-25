@@ -445,16 +445,16 @@ void Item::applyLockpick(int player, Entity& entity)
 				
 				if ( tryDegradeLockpick && stats[player]->weapon && stats[player]->weapon->type == TOOL_LOCKPICK )
 				{
-					if ( local_rng.rand() % 5 == 0 && !(players[player]->entity && players[player]->entity->spellEffectPreserveItem(stats[player]->weapon)) )
+					if ( local_rng.rand() % 15 == 0 && !(players[player]->entity && players[player]->entity->spellEffectPreserveItem(stats[player]->weapon)) )
 					{
-						if ( player >= 0 && players[player]->isLocalPlayer() )
+						/*if ( player >= 0 && players[player]->isLocalPlayer() )
 						{
 							if ( count > 1 )
 							{
 								newItem(type, status, beatitude, count - 1, appearance, identified, &stats[player]->inventory);
 							}
 						}
-						stats[player]->weapon->count = 1;
+						stats[player]->weapon->count -= 1;
 						stats[player]->weapon->status = static_cast<Status>(stats[player]->weapon->status - 1);
 						if ( status != BROKEN )
 						{
@@ -463,8 +463,26 @@ void Item::applyLockpick(int player, Entity& entity)
 						else
 						{
 							messagePlayer(player, MESSAGE_EQUIPMENT, Language::get(1104));
-						}
+						}*/
+
+						messagePlayer(player, MESSAGE_EQUIPMENT, Language::get(1104));
+						Item* item = stats[player]->weapon;
+						consumeItem(item, player);
+						playSoundEntity(players[player]->entity, 76, 64);
+
+						
+
 						if ( player > 0 && multiplayer == SERVER )
+						{
+							strcpy((char*) (net_packet->data), "LKPK");
+							net_packet->data[4] = player;
+							net_packet->address.host = net_clients[player - 1].host;
+							net_packet->address.port = net_clients[player - 1].port;
+							net_packet->len = 6;
+							sendPacketSafe(net_sock, -1, net_packet, player - 1);
+						}
+
+						/*if ( player > 0 && multiplayer == SERVER )
 						{
 							strcpy((char*) (net_packet->data), "ARMR");
 							net_packet->data[4] = 5;
@@ -474,7 +492,7 @@ void Item::applyLockpick(int player, Entity& entity)
 							net_packet->address.port = net_clients[player - 1].port;
 							net_packet->len = 8;
 							sendPacketSafe(net_sock, -1, net_packet, player - 1);
-						}
+						}*/
 					}
 				}
 			}
@@ -590,9 +608,9 @@ void Item::applyLockpick(int player, Entity& entity)
 				
 				if ( tryDegradeLockpick && stats[player]->weapon && stats[player]->weapon->type == TOOL_LOCKPICK )
 				{
-					if ( local_rng.rand() % 5 == 0 && !(players[player]->entity && players[player]->entity->spellEffectPreserveItem(stats[player]->weapon)) )
+					if ( local_rng.rand() % 15 == 0 && !(players[player]->entity && players[player]->entity->spellEffectPreserveItem(stats[player]->weapon)) )
 					{
-						if ( player >= 0 && players[player]->isLocalPlayer() )
+						/*if ( player >= 0 && players[player]->isLocalPlayer() )
 						{
 							if ( count > 1 )
 							{
@@ -608,8 +626,24 @@ void Item::applyLockpick(int player, Entity& entity)
 						else
 						{
 							messagePlayer(player, MESSAGE_INTERACTION | MESSAGE_EQUIPMENT, Language::get(1104));
-						}
+						}*/
+						
+						messagePlayer(player, MESSAGE_EQUIPMENT, Language::get(1104));
+						Item* item = stats[player]->weapon;
+						consumeItem(item, player);
+						playSoundEntity(players[player]->entity, 76, 64);
+
 						if ( player > 0 && multiplayer == SERVER )
+						{
+							strcpy((char*) (net_packet->data), "LKPK");
+							net_packet->data[4] = player;
+							net_packet->address.host = net_clients[player - 1].host;
+							net_packet->address.port = net_clients[player - 1].port;
+							net_packet->len = 6;
+							sendPacketSafe(net_sock, -1, net_packet, player - 1);
+						}
+
+						/*if ( player > 0 && multiplayer == SERVER )
 						{
 							strcpy((char*) (net_packet->data), "ARMR");
 							net_packet->data[4] = 5;
@@ -619,7 +653,7 @@ void Item::applyLockpick(int player, Entity& entity)
 							net_packet->address.port = net_clients[player - 1].port;
 							net_packet->len = 8;
 							sendPacketSafe(net_sock, -1, net_packet, player - 1);
-						}
+						}*/
 					}
 				}
 			}
@@ -759,9 +793,9 @@ void Item::applyLockpick(int player, Entity& entity)
 
 					if ( tryDegradeLockpick && stats[player]->weapon && stats[player]->weapon->type == TOOL_LOCKPICK )
 					{
-						if ( local_rng.rand() % 5 == 0 && !(players[player]->entity && players[player]->entity->spellEffectPreserveItem(stats[player]->weapon)) )
+						if ( local_rng.rand() % 15 == 0 && !(players[player]->entity && players[player]->entity->spellEffectPreserveItem(stats[player]->weapon)) )
 						{
-							if ( player >= 0 && players[player]->isLocalPlayer() )
+							/*if ( player >= 0 && players[player]->isLocalPlayer() )
 							{
 								if ( count > 1 )
 								{
@@ -777,8 +811,24 @@ void Item::applyLockpick(int player, Entity& entity)
 							else
 							{
 								messagePlayer(player, MESSAGE_INTERACTION | MESSAGE_EQUIPMENT, Language::get(1104));
-							}
+							}*/
+
+							messagePlayer(player, MESSAGE_EQUIPMENT, Language::get(1104));
+							Item* item = stats[player]->weapon;
+							consumeItem(item, player);
+							playSoundEntity(players[player]->entity, 76, 64);
+
 							if ( player > 0 && multiplayer == SERVER )
+						{
+							strcpy((char*) (net_packet->data), "LKPK");
+							net_packet->data[4] = player;
+							net_packet->address.host = net_clients[player - 1].host;
+							net_packet->address.port = net_clients[player - 1].port;
+							net_packet->len = 6;
+							sendPacketSafe(net_sock, -1, net_packet, player - 1);
+						}
+
+							/*if ( player > 0 && multiplayer == SERVER )
 							{
 								strcpy((char*)(net_packet->data), "ARMR");
 								net_packet->data[4] = 5;
@@ -788,7 +838,7 @@ void Item::applyLockpick(int player, Entity& entity)
 								net_packet->address.port = net_clients[player - 1].port;
 								net_packet->len = 8;
 								sendPacketSafe(net_sock, -1, net_packet, player - 1);
-							}
+							}*/
 						}
 					}
 				}
