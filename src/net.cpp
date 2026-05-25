@@ -8857,6 +8857,9 @@ static std::unordered_map<Uint32, void(*)()> serverPacketHandlers = {
 			case 7:
 				equipment = stats[player]->mask;
 				break;
+			case 8:
+				equipment = stats[player]->amulet;
+				break;
 			default:
 				equipment = nullptr;
 				break;

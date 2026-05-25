@@ -5649,10 +5649,6 @@ bool GenericGUIMenu::isItemRepairable(const Item* item, int repairScroll)
 			{
 				return false;
 			}
-			if ( itemIsEquipped(item, gui_player) )
-			{
-				return false;
-			}
 			return true;
 		}
 
@@ -7248,7 +7244,7 @@ void GenericGUIMenu::repairItem(Item* item)
 
 	if ( itemEffectItemType == SCROLL_CHARGING )
 	{
-		if ( itemCategory(item) == MAGICSTAFF || itemCategory(item) == AMULET )
+		if ( itemCategory(item) == MAGICSTAFF )
 		{
 			Compendium_t::Events_t::eventUpdate(gui_player, Compendium_t::CPDM_MAGICSTAFF_RECHARGED, item->type, 1);
 			if ( item->type == MAGICSTAFF_SCEPTER )
@@ -7301,6 +7297,24 @@ void GenericGUIMenu::repairItem(Item* item)
 			}
 			item->appearance += repairAmount;
 			item->status = EXCELLENT;
+		}
+		else if ( itemCategory(item) == AMULET )
+		{
+			if ( item->status == BROKEN )
+			{
+				if ( itemEffectItemBeatitude > 0 )
+				{
+					item->status = EXCELLENT;
+				}
+				else
+				{
+					item->status = WORN;
+				}
+			}
+			else
+			{
+				item->status = EXCELLENT;
+			}
 		}
 		messagePlayer(gui_player, MESSAGE_MISC, Language::get(3730), item->getName());
 	}
@@ -7370,6 +7384,10 @@ void GenericGUIMenu::repairItem(Item* item)
 		else if ( item == stats[gui_player]->mask )
 		{
 			armornum = 7;
+		}
+		else if ( item == stats[gui_player]->amulet )
+		{
+			armornum = 8;
 		}
 		strcpy((char*)net_packet->data, "REPA");
 		net_packet->data[4] = gui_player;
@@ -24657,6 +24675,17 @@ GenericGUIMenu::ItemEffectGUI_t::ItemEffectActions_t GenericGUIMenu::ItemEffectG
 				}
 			}
 			else if ( itemCategory(item) == MAGICSTAFF )
+			{
+				if ( item->status == EXCELLENT )
+				{
+					result = ITEMFX_ACTION_ITEM_FULLY_CHARGED;
+				}
+				else
+				{
+					result = ITEMFX_ACTION_OK;
+				}
+			}
+			else if ( itemCategory(item) == AMULET )
 			{
 				if ( item->status == EXCELLENT )
 				{
