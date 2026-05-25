@@ -5643,6 +5643,18 @@ bool GenericGUIMenu::isItemRepairable(const Item* item, int repairScroll)
 			}
 			return true;
 		}
+		else if ( cat == AMULET )
+		{
+			if ( item->status == EXCELLENT )
+			{
+				return false;
+			}
+			if ( itemIsEquipped(item, gui_player) )
+			{
+				return false;
+			}
+			return true;
+		}
 
 		return false;
 	}
@@ -7236,7 +7248,7 @@ void GenericGUIMenu::repairItem(Item* item)
 
 	if ( itemEffectItemType == SCROLL_CHARGING )
 	{
-		if ( itemCategory(item) == MAGICSTAFF )
+		if ( itemCategory(item) == MAGICSTAFF || itemCategory(item) == AMULET )
 		{
 			Compendium_t::Events_t::eventUpdate(gui_player, Compendium_t::CPDM_MAGICSTAFF_RECHARGED, item->type, 1);
 			if ( item->type == MAGICSTAFF_SCEPTER )

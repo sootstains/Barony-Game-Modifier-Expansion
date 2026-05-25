@@ -787,10 +787,18 @@ void actArrow(Entity* my)
 						// normal damage.
 					}
 
+					bool doArmorDamage = false;
+					int predamage = my->arrowPower;
+
 					int numBlessings = 0;
 					real_t targetACEffectiveness = Entity::getACEffectiveness(hit.entity, hitstats, hit.entity->behavior == &actPlayer, parent, parent ? parent->getStats() : nullptr, numBlessings);
 					int attackAfterReductions = static_cast<int>(std::max(0.0, ((my->arrowPower * targetACEffectiveness - enemyAC))) + (1.0 - targetACEffectiveness) * my->arrowPower);
 					int damage = attackAfterReductions;
+
+					if ( predamage > enemyAC || !(hitstats->shield && hitstats->defending) )
+					{
+						doArmorDamage = true;
+					}
 
 					bool backstab = false;
 					bool flanking = false;
@@ -1136,7 +1144,7 @@ void actArrow(Entity* my)
 						}
 					}
 
-					if ( damage > 0 )
+					if ( damage > 0 && doArmorDamage )
 					{
 						Entity* gib = spawnGib(hit.entity);
 						serverSpawnGibForClient(gib);
@@ -1687,7 +1695,7 @@ void actArrow(Entity* my)
 						Item* armor = NULL;
 						int armornum = 0;
 						bool isWeakArmor = false;
-						if ( damage > 0 || (damage == 0 && !(hitstats->shield && hitstats->defending)) )
+						if ( doArmorDamage ) //damage > 0 || (damage == 0 && !(hitstats->shield && hitstats->defending)) )
 						{
 							armornum = hitstats->pickRandomEquippedItemToDegradeOnHit(&armor, true, false, false, true);
 							if ( armor != NULL && armor->status > BROKEN )

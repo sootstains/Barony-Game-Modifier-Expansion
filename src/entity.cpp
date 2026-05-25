@@ -12932,16 +12932,13 @@ void Entity::attack(int pose, int charge, Entity* target)
 					}
 
 					int numBlessings = 0;
-					double enoughAttackForArmorDamage = 0.0;
 					bool doArmorDamage = false;
+					int predamage = myAttack;
 					
 					real_t targetACEffectiveness = Entity::getACEffectiveness(hit.entity, hitstats, hit.entity->behavior == &actPlayer, this, myStats, numBlessings);
-
-					enoughAttackForArmorDamage = myAttack * (1.0 - targetACEffectiveness);
-
 					int attackAfterReductions = static_cast<int>(std::max(0.0, ((myAttack * targetACEffectiveness - enemyAC))) + (1.0 - targetACEffectiveness) * myAttack);
 
-					if ( attackAfterReductions > enoughAttackForArmorDamage || !(hitstats->shield && hitstats->defending) )
+					if ( predamage > enemyAC || !(hitstats->shield && hitstats->defending) )
 					{
 						doArmorDamage = true; // only deal armor damage if insufficient AC to block
 					}
@@ -14652,7 +14649,7 @@ void Entity::attack(int pose, int charge, Entity* target)
 							}
 						}
 					}
-					else if ( (damage > 0 || hitstats->getEffectActive(EFF_PACIFY) 
+					else if ( (doArmorDamage || hitstats->getEffectActive(EFF_PACIFY) // change rules to doArmorDamage
 						|| hitstats->getEffectActive(EFF_FEAR) 
 						|| hitstats->getEffectActive(EFF_COWARDICE) ) && local_rng.rand() % 4 == 0 )
 					{
@@ -15629,7 +15626,7 @@ void Entity::attack(int pose, int charge, Entity* target)
 
 					bool blowBouncesOff = false;
 
-					if ( damage > 0 )
+					if ( damage > 0 && doArmorDamage )
 					{
 						Entity* gib = spawnGib(hit.entity);
 						serverSpawnGibForClient(gib);
@@ -16255,7 +16252,7 @@ void Entity::attack(int pose, int charge, Entity* target)
 					bool wasBleeding = hitstats->getEffectActive(EFF_BLEEDING) > 0; // check if currently bleeding when this roll occurred.
 					if ( gibtype[(int)hitstats->type] > 0 && gibtype[(int)hitstats->type] != 5 )
 					{
-						if ( bleedStatusInflicted || (hitstats->HP > 5 && damage > 0) )
+						if ( bleedStatusInflicted || (hitstats->HP > 5 && damage > 0 && doArmorDamage) )
 						{
 							if ( bleedStatusInflicted || (local_rng.rand() % 20 == 0 && (weaponskill > PRO_SWORD && weaponskill <= PRO_POLEARM) )
 								|| (local_rng.rand() % 10 == 0 && weaponskill == PRO_SWORD)
@@ -16535,6 +16532,10 @@ void Entity::attack(int pose, int charge, Entity* target)
 								lifeStealAmount /= 4;
 								lifeStealAmount = std::max(3, lifeStealAmount);
 							}
+						}
+						else if ( (myStats->type == GHOUL && hitstats->getEffectActive(EFF_INFECTION)) )
+						{
+							forceLifesteal = true;
 						}
 						else if ( (myStats->getEffectActive(EFF_VAMPIRICAURA) && (myStats->weapon == nullptr || myStats->type == LICH_FIRE)) )
 						{
