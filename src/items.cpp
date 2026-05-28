@@ -6225,10 +6225,10 @@ void Item::applyLockpickToWall(const int player, const int x, const int y) const
 					}
 
 					// degrade lockpick.
-					if ( !(stats[player]->weapon->type == TOOL_SKELETONKEY) && (local_rng.rand() % 10 == 0 || (failed && local_rng.rand() % 4 == 0))
+					if ( !(stats[player]->weapon->type == TOOL_SKELETONKEY) && (local_rng.rand() % 30 == 0 || (failed && local_rng.rand() % 12 == 0))
 						&& !(players[player]->entity && players[player]->entity->spellEffectPreserveItem(stats[player]->weapon)) )
 					{
-						if ( players[player]->isLocalPlayer() )
+						/*if ( players[player]->isLocalPlayer() )
 						{
 							if ( count > 1 )
 							{
@@ -6255,6 +6255,21 @@ void Item::applyLockpickToWall(const int player, const int x, const int y) const
 							net_packet->address.host = net_clients[player - 1].host;
 							net_packet->address.port = net_clients[player - 1].port;
 							net_packet->len = 8;
+							sendPacketSafe(net_sock, -1, net_packet, player - 1);
+						}*/
+					
+						messagePlayer(player, MESSAGE_EQUIPMENT, Language::get(1104));
+						Item* item = stats[player]->weapon;
+						consumeItem(item, player);
+						playSoundEntity(players[player]->entity, 76, 64);
+
+						if ( player > 0 && multiplayer == SERVER )
+						{
+							strcpy((char*) (net_packet->data), "LKPK");
+							net_packet->data[4] = player;
+							net_packet->address.host = net_clients[player - 1].host;
+							net_packet->address.port = net_clients[player - 1].port;
+							net_packet->len = 6;
 							sendPacketSafe(net_sock, -1, net_packet, player - 1);
 						}
 					}

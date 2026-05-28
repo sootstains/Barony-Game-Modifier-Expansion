@@ -819,14 +819,14 @@ void Item::applyLockpick(int player, Entity& entity)
 							playSoundEntity(players[player]->entity, 76, 64);
 
 							if ( player > 0 && multiplayer == SERVER )
-						{
-							strcpy((char*) (net_packet->data), "LKPK");
-							net_packet->data[4] = player;
-							net_packet->address.host = net_clients[player - 1].host;
-							net_packet->address.port = net_clients[player - 1].port;
-							net_packet->len = 6;
-							sendPacketSafe(net_sock, -1, net_packet, player - 1);
-						}
+							{
+								strcpy((char*) (net_packet->data), "LKPK");
+								net_packet->data[4] = player;
+								net_packet->address.host = net_clients[player - 1].host;
+								net_packet->address.port = net_clients[player - 1].port;
+								net_packet->len = 6;
+								sendPacketSafe(net_sock, -1, net_packet, player - 1);
+							}
 
 							/*if ( player > 0 && multiplayer == SERVER )
 							{
@@ -962,10 +962,10 @@ void Item::applyLockpick(int player, Entity& entity)
 							players[player]->entity->increaseSkill(PRO_LOCKPICKING);
 						}
 					}
-					if ( local_rng.rand() % 2 == 0 && stats[player]->weapon && stats[player]->weapon->type == TOOL_LOCKPICK
+					if ( local_rng.rand() % 6 == 0 && stats[player]->weapon && stats[player]->weapon->type == TOOL_LOCKPICK
 						&& !(players[player]->entity && players[player]->entity->spellEffectPreserveItem(stats[player]->weapon)) )
 					{
-						if ( player >= 0 && players[player]->isLocalPlayer() )
+						/*if ( player >= 0 && players[player]->isLocalPlayer() )
 						{
 							if ( count > 1 )
 							{
@@ -991,6 +991,22 @@ void Item::applyLockpick(int player, Entity& entity)
 							net_packet->address.host = net_clients[player - 1].host;
 							net_packet->address.port = net_clients[player - 1].port;
 							net_packet->len = 8;
+							sendPacketSafe(net_sock, -1, net_packet, player - 1);
+						}*/
+
+
+						messagePlayer(player, MESSAGE_EQUIPMENT, Language::get(1104));
+						Item* item = stats[player]->weapon;
+						consumeItem(item, player);
+						playSoundEntity(players[player]->entity, 76, 64);
+
+						if ( player > 0 && multiplayer == SERVER )
+						{
+							strcpy((char*) (net_packet->data), "LKPK");
+							net_packet->data[4] = player;
+							net_packet->address.host = net_clients[player - 1].host;
+							net_packet->address.port = net_clients[player - 1].port;
+							net_packet->len = 6;
 							sendPacketSafe(net_sock, -1, net_packet, player - 1);
 						}
 					}
